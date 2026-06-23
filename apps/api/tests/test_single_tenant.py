@@ -56,6 +56,10 @@ def test_creates_all_rows_when_empty():
     assert {Org, User, OrgMember, Workspace} <= kinds
     assert set(ids) == {"org_id", "user_id", "workspace_id"}
     assert all(ids.values())
+    member = next(r for r in session.added if isinstance(r, OrgMember))
+    assert member.org_id is not None
+    assert member.user_id is not None
+    assert member.role == "owner"
 
 
 def test_idempotent_when_rows_exist():
@@ -66,3 +70,11 @@ def test_idempotent_when_rows_exist():
     ids = asyncio.run(st.ensure_single_tenant(session))
     assert session.added == []  # nothing created
     assert ids == {"org_id": "org-1", "user_id": "user-1", "workspace_id": "ws-1"}
+
+
+def test_seed_ids_caches_after_first_call():
+    ids1 = asyncio.run(st.seed_ids(FakeSession([None, None, None])))
+    # second call must NOT re-query — pass an exhausted session; cache should serve it
+    ids2 = asyncio.run(st.seed_ids(FakeSession([])))
+    assert ids1 == ids2
+    assert set(ids2) == {"org_id", "user_id", "workspace_id"}
