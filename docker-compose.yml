@@ -64,9 +64,6 @@ services:
       # VM-local docker-compose.yml edit that hand-removed these lines.
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-["http://localhost:3000"]}
       WEB_BASE_URL: ${WEB_BASE_URL:-http://localhost:3000}
-      # Clerk — used to verify session JWTs and fetch user records
-      CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
       # Pencheff scanning engine — operator-supplied chat-completions
       # backend. Defaults are set in pencheff_api/config.py.
       AGENT_LLM_API_KEY: ${AGENT_LLM_API_KEY:-}

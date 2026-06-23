@@ -37,7 +37,13 @@ RUN npm run build
 
 FROM node:25.9-alpine AS runner
 WORKDIR /app
-RUN npm install -g serve
-COPY --from=builder /app/out ./out
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 EXPOSE 3000
-CMD ["serve", "-l", "3000", "out"]
+# `next start -p 3000` (package.json "start"). Serves all routes, including
+# per-resource dynamic routes, on demand — no static shells/rewrites needed.
+CMD ["npm", "run", "start"]
