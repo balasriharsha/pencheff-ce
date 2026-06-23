@@ -9,38 +9,38 @@
 Point it at a target, describe the engagement in plain language, and let it run reconnaissance, vulnerability scanning, exploit-chain analysis, and reporting — entirely on your own infrastructure.
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
-[![Self-hosted](https://img.shields.io/badge/deploy-self--hosted-brightgreen?style=flat-square)](#-quick-start)
-[![No login](<https://img.shields.io/badge/auth-none_(single_user)-blueviolet?style=flat-square>)](#-community-edition-scope)
-[![Docker](https://img.shields.io/badge/run-docker_compose-2496ED?style=flat-square&logo=docker&logoColor=white)](#-quick-start)
-[![Backend](https://img.shields.io/badge/api-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](#-architecture)
-[![Frontend](https://img.shields.io/badge/web-Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)](#-architecture)
-[![Targets](https://img.shields.io/badge/target_types-13-orange?style=flat-square)](#-target-types)
-[![MCP](https://img.shields.io/badge/MCP_tools-50%2B-9cf?style=flat-square)](#-use-it-from-an-ai-agent-mcp)
+[![Self-hosted](https://img.shields.io/badge/deploy-self--hosted-brightgreen?style=flat-square)](#quick-start)
+[![No login](<https://img.shields.io/badge/auth-none_(single_user)-blueviolet?style=flat-square>)](#community-edition-scope)
+[![Docker](https://img.shields.io/badge/run-docker_compose-2496ED?style=flat-square&logo=docker&logoColor=white)](#quick-start)
+[![Backend](https://img.shields.io/badge/api-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](#architecture)
+[![Frontend](https://img.shields.io/badge/web-Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)](#architecture)
+[![Targets](https://img.shields.io/badge/target_types-13-orange?style=flat-square)](#target-types)
+[![MCP](https://img.shields.io/badge/MCP_tools-50%2B-9cf?style=flat-square)](#use-it-from-an-ai-agent-mcp)
 
-[Quick Start](#-quick-start) · [Capabilities](#-whats-inside) · [Target Types](#-target-types) · [Architecture](#-architecture) · [AI / MCP](#-use-it-from-an-ai-agent-mcp) · [Configuration](#-configuration) · [Scope](#-community-edition-scope)
+[Quick Start](#quick-start) · [Capabilities](#whats-inside) · [Target Types](#target-types) · [Architecture](#architecture) · [AI / MCP](#use-it-from-an-ai-agent-mcp) · [Configuration](#configuration) · [Scope](#community-edition-scope)
 
 </div>
 
-> **🛡️ Community Edition** — This is the open-source, single-user build of Pencheff. No accounts, no login, no billing, no multi-tenancy. You own the box, you own the data. **Use it only against systems you are authorized to test.**
+> **Community Edition** — This is the open-source, single-user build of Pencheff. No accounts, no login, no billing, no multi-tenancy. You own the box, you own the data. **Use it only against systems you are authorized to test.**
 
 ---
 
-## ✨ What it is
+## What it is
 
 Pencheff CE is a complete offensive-security platform you run yourself with **one command**. There's no sign-up and no login screen — `docker compose up`, open `http://localhost:3000`, and you land straight on the dashboard.
 
 It pairs a **deterministic scan engine** (the same reconnaissance, fuzzing, and exploitation primitives a pentester reaches for) with **optional AI orchestration** (bring your own LLM key) that triages findings, proposes fixes, and can drive autonomous assessment passes. Without an LLM key, every scan, finding, and report still works — the AI paths simply stay dark.
 
-- 🔓 **Zero-auth, single-user** — one implicit operator, no orgs/teams/SSO.
-- 🧰 **Full engine** — recon → scan → verify → exploit-chain → report, end to end.
-- 🤖 **Bring-your-own AI** — optional LLM-assisted triage, grading, and remediation.
-- 🔌 **Agent-native** — drive the whole platform from any MCP-capable AI agent.
-- 🐳 **One-command deploy** — Docker Compose brings up the entire stack.
-- 📜 **Apache-2.0** — fork it, ship it, run it anywhere.
+- **Zero-auth, single-user** — one implicit operator, no orgs/teams/SSO.
+- **Full engine** — recon → scan → verify → exploit-chain → report, end to end.
+- **Bring-your-own AI** — optional LLM-assisted triage, grading, and remediation.
+- **Agent-native** — drive the whole platform from any MCP-capable AI agent.
+- **One-command deploy** — Docker Compose brings up the entire stack.
+- **Apache-2.0** — fork it, ship it, run it anywhere.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone
@@ -64,47 +64,47 @@ That's it. The `FERNET_KEY` auto-generates on first boot, migrations run automat
 ./scripts/smoke.sh   # asserts /targets and /dashboard return 200
 ```
 
-> **Want AI features?** Drop an `LLM_API_KEY` into `apps/api/.env` (see [Configuration](#-configuration)). Everything else runs without one.
+> **Want AI features?** Drop an `LLM_API_KEY` into `apps/api/.env` (see [Configuration](#configuration)). Everything else runs without one.
 
 ---
 
-## 🧩 What's inside
+## What's inside
 
 The full scan surface, organized by capability. Coverage is computed live on the **`/scans`** dashboard from your real activity.
 
-| Capability            | What it does                                                                                       |
-| --------------------- | -------------------------------------------------------------------------------------------------- |
-| 🌐 **Recon**          | Passive + active reconnaissance, API discovery, subdomain enumeration, asset mapping               |
-| ⚡ **DAST**           | Live web-app scanning — OWASP Top 10, injection, auth/authz, business-logic, client-side & DOM XSS |
-| `</>` **SAST**        | Source-code analysis via Semgrep across cloned repositories                                        |
-| 🔑 **Secrets**        | Hardcoded-credential and secret detection (Gitleaks)                                               |
-| 📦 **SCA**            | Dependency / advisory scanning (OSV + GitHub Advisory DB) with SBOM ingest                         |
-| 📚 **IaC**            | Terraform / Kubernetes misconfiguration scanning (Trivy, Checkov)                                  |
-| 🧊 **Container**      | Container-image CVE & misconfig scanning                                                           |
-| 🧠 **LLM Red Team**   | Prompt-injection, jailbreak, and safety testing for LLM-backed targets                             |
-| 🛠️ **Manual tooling** | Burp-style **Repeater**, **Intruder** (fuzzing), and an intercepting **Proxy**                     |
-| 📡 **OAST**           | Out-of-band callback testing for blind SSRF / RCE / injection                                      |
-| 🧮 **Scoring**        | CVSS v4.0 calculation and severity grading                                                         |
-| 🤖 **Agentic Fix**    | AI-proposed remediations and patch suggestions (optional LLM)                                      |
-| 📄 **Reporting**      | Export findings to Word, Markdown, CSV, and JSON                                                   |
-| ⏱️ **Schedules**      | Recurring, on-demand scan scheduling                                                               |
+| Capability         | What it does                                                                                       |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| **Recon**          | Passive + active reconnaissance, API discovery, subdomain enumeration, asset mapping               |
+| **DAST**           | Live web-app scanning — OWASP Top 10, injection, auth/authz, business-logic, client-side & DOM XSS |
+| **SAST**           | Source-code analysis via Semgrep across cloned repositories                                        |
+| **Secrets**        | Hardcoded-credential and secret detection (Gitleaks)                                               |
+| **SCA**            | Dependency / advisory scanning (OSV + GitHub Advisory DB) with SBOM ingest                         |
+| **IaC**            | Terraform / Kubernetes misconfiguration scanning (Trivy, Checkov)                                  |
+| **Container**      | Container-image CVE & misconfig scanning                                                           |
+| **LLM Red Team**   | Prompt-injection, jailbreak, and safety testing for LLM-backed targets                             |
+| **Manual tooling** | Burp-style **Repeater**, **Intruder** (fuzzing), and an intercepting **Proxy**                     |
+| **OAST**           | Out-of-band callback testing for blind SSRF / RCE / injection                                      |
+| **Scoring**        | CVSS v4.0 calculation and severity grading                                                         |
+| **Agentic Fix**    | AI-proposed remediations and patch suggestions (optional LLM)                                      |
+| **Reporting**      | Export findings to Word, Markdown, CSV, and JSON                                                   |
+| **Schedules**      | Recurring, on-demand scan scheduling                                                               |
 
 ---
 
-## 🎯 Target types
+## Target types
 
 Register and scan **13 distinct target types** — each with its own purpose-built scan pipeline:
 
-|                      |                     |                       |                |
-| -------------------- | ------------------- | --------------------- | -------------- |
-| 🌐 `web_app`         | 🔗 `rest_api`       | ◢ `graphql`           | 🔌 `websocket` |
-| 📞 `grpc`            | `</>` `source_code` | ⚙️ `cicd_pipeline`    | 📚 `iac`       |
-| 🧊 `container_image` | ☸️ `k8s_cluster`    | 📦 `package_registry` | 📋 `sbom`      |
-| 🧠 `llm`             |                     |                       |                |
+|                   |               |                    |             |
+| ----------------- | ------------- | ------------------ | ----------- |
+| `web_app`         | `rest_api`    | `graphql`          | `websocket` |
+| `grpc`            | `source_code` | `cicd_pipeline`    | `iac`       |
+| `container_image` | `k8s_cluster` | `package_registry` | `sbom`      |
+| `llm`             |               |                    |             |
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 docker compose
@@ -127,7 +127,7 @@ The browser talks to the API directly (CORS is preconfigured for `localhost:3000
 
 ---
 
-## 🤖 Use it from an AI agent (MCP)
+## Use it from an AI agent (MCP)
 
 Pencheff ships an **MCP server with 50+ security tools** — recon, scanning across every discipline, payload generation, OAST, exploit-chain suggestion, CVSS scoring, finding verification, and report export. Point any MCP-capable agent (Claude Code, Claude Desktop, or your own) at it and drive a full engagement conversationally:
 
@@ -141,7 +141,7 @@ A representative slice of the toolset: `pentest_init` · `recon_active` · `scan
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Everything is configured through environment variables in `.env` (root) and `apps/api/.env`. Sensible defaults ship in the `*.env.example` files.
 
@@ -161,22 +161,22 @@ curl http://localhost:8000/capabilities/ai      # → {"available": true|false}
 
 ---
 
-## 📦 Community Edition scope
+## Community Edition scope
 
 This build is deliberately lean and single-tenant. The following are **intentionally not included**:
 
-- ❌ Authentication / login / SSO (one implicit operator)
-- ❌ Multi-tenant orgs, teams, or workspace management
-- ❌ Billing, plans, or usage metering
-- ❌ Engagement workbench (multi-analyst campaign tracking)
-- ❌ Compliance-framework mapping & reporting
-- ❌ Hosted/SaaS integrations that require paid back-ends (off by default)
+- Authentication / login / SSO (one implicit operator)
+- Multi-tenant orgs, teams, or workspace management
+- Billing, plans, or usage metering
+- Engagement workbench (multi-analyst campaign tracking)
+- Compliance-framework mapping & reporting
+- Hosted/SaaS integrations that require paid back-ends (off by default)
 
 What you get instead: the complete scanning engine, the full local dashboard, the MCP toolset, and reporting — yours to run, fork, and extend.
 
 ---
 
-## 🛠️ Tech stack
+## Tech stack
 
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
@@ -189,7 +189,7 @@ What you get instead: the complete scanning engine, the full local dashboard, th
 
 ---
 
-## ⭐ Star history
+## Star history
 
 <a href="https://star-history.com/#balasriharsha/pencheff-ce&Date">
   <img src="https://api.star-history.com/svg?repos=balasriharsha/pencheff-ce&type=Date" alt="Star History Chart" width="600" />
@@ -197,19 +197,19 @@ What you get instead: the complete scanning engine, the full local dashboard, th
 
 ---
 
-## ⚖️ Legal & responsible use
+## Legal & responsible use
 
 Pencheff is an **offensive-security tool**. Only scan, probe, or exploit systems you own or have **explicit written authorization** to test. Unauthorized use may be illegal. You are responsible for how you use it.
 
-## 📄 License
+## License
 
 Licensed under the **Apache License, Version 2.0** — see [LICENSE](LICENSE). Third-party component notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 <div align="center">
 
-**If Pencheff CE is useful to you, consider giving it a ⭐**
+**If Pencheff CE is useful to you, consider giving it a star**
 
-[⭐ Star](https://github.com/balasriharsha/pencheff-ce) · [🍴 Fork](https://github.com/balasriharsha/pencheff-ce/fork) · [🐛 Issues](https://github.com/balasriharsha/pencheff-ce/issues)
+[Star](https://github.com/balasriharsha/pencheff-ce) · [Fork](https://github.com/balasriharsha/pencheff-ce/fork) · [Issues](https://github.com/balasriharsha/pencheff-ce/issues)
 
 <sub>© 2026 Magadha Group · Apache-2.0 · Built for self-hosted security work.</sub>
 
