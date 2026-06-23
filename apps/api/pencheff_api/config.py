@@ -320,4 +320,8 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    if not s.fernet_key:
+        from cryptography.fernet import Fernet
+        s.fernet_key = Fernet.generate_key().decode()
+    return s
