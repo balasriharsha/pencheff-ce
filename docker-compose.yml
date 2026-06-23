@@ -233,32 +233,6 @@ services:
   # web/ is now a Cloudflare Pages static export (apps/web → `next build` → out/).
   # See DEPLOYMENT.md. Local dev: `cd apps/web && npm run dev`.
 
-  docs:
-    restart: unless-stopped
-    build:
-      context: apps/docs
-      dockerfile: Dockerfile
-    environment:
-      NEXT_PUBLIC_LANDING_URL: ${NEXT_PUBLIC_LANDING_URL:-http://localhost:3000}
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-    ports:
-      - "3001:3001"
-
-  blog:
-    restart: unless-stopped
-    build:
-      context: apps/blog
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_LANDING_URL: ${NEXT_PUBLIC_LANDING_URL:-https://pencheff.com}
-    environment:
-      # Path inside the container where .md files are read at request time.
-      # Mapped from repo-root ./blog-content via the volume below.
-      BLOG_CONTENT_DIR: /content
-    volumes:
-      - ./blog-content:/content
-    ports:
-      - "3002:3002"
 
 volumes:
   pg_data:
