@@ -183,6 +183,16 @@ async def _production_safety_check() -> None:
 
 
 @app.on_event("startup")
+async def _seed_single_tenant() -> None:
+    from .auth.single_tenant import ensure_single_tenant
+    from .db.base import SessionLocal
+
+    async with SessionLocal() as session:
+        await ensure_single_tenant(session)
+    log.info("single-tenant seed ensured")
+
+
+@app.on_event("startup")
 async def _start_on_demand_scheduler() -> None:
     global _on_demand_scheduler_task, _worker_idle_stop_task
     if settings.worker_always_on:
