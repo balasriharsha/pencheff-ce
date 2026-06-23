@@ -894,7 +894,7 @@ export function LandingClosingSection() {
             className="lp-closing-cta lp-fade-up"
             style={{ ["--lp-d" as string]: "360ms" } as React.CSSProperties}
           >
-            <Link className="lp-btn lp-btn-arrow" href="/signup">
+            <Link className="lp-btn lp-btn-arrow" href="/dashboard">
               Open an account
             </Link>
           </div>
@@ -946,9 +946,7 @@ export function LandingColophon() {
                   <Link href="/enquiries">Enquiries</Link>
                 </li>
                 <li>
-                  <Link href="/resources/overview">
-                    Documentation
-                  </Link>
+                  <Link href="/resources/overview">Documentation</Link>
                 </li>
                 <li>
                   <Link href="/resources/repo-scan">Repository (MIT)</Link>
@@ -959,10 +957,10 @@ export function LandingColophon() {
               <h5>Account</h5>
               <ul>
                 <li>
-                  <Link href="/signup">Open an account</Link>
+                  <Link href="/dashboard">Open an account</Link>
                 </li>
                 <li>
-                  <Link href="/login">Sign in</Link>
+                  <Link href="/dashboard">Sign in</Link>
                 </li>
                 <li>
                   <Link href="/dashboard">Dashboard</Link>

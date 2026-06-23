@@ -1151,10 +1151,10 @@ export function MarketingDetailPage({
               <p className="lp-feature-lead">{topic.item.body}</p>
               <p className="lp-feature-summary">{profile.summary}</p>
               <div className="lp-feature-actions">
-                <Link href="/signup" className="lp-btn lp-btn-arrow">
+                <Link href="/dashboard" className="lp-btn lp-btn-arrow">
                   Start free
                 </Link>
-                <Link href="/login" className="lp-btn lp-btn-ghost">
+                <Link href="/dashboard" className="lp-btn lp-btn-ghost">
                   Sign in
                 </Link>
               </div>

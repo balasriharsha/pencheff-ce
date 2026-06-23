@@ -158,22 +158,6 @@ function IntegrationsIcon() {
     </svg>
   );
 }
-function TeamIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden
-    >
-      <circle cx="6" cy="5.5" r="2.5" />
-      <path d="M1 13.5a5 5 0 0 1 10 0" />
-      <circle cx="12" cy="5.5" r="2" />
-      <path d="M14.5 13.5a3 3 0 0 0-3-3" />
-    </svg>
-  );
-}
 function KeyIcon() {
   return (
     <svg
@@ -248,7 +232,6 @@ const PRIMARY_NAV = [
 
 const SETTINGS_NAV = [
   { href: "/integrations", label: "Integrations", icon: <IntegrationsIcon /> },
-  { href: "/org/settings", label: "Team", icon: <TeamIcon /> },
   { href: "/settings/api-keys", label: "API Keys", icon: <KeyIcon /> },
   { href: "/settings", label: "Settings", icon: <SettingsIcon /> },
 ] as const;
@@ -866,13 +849,6 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             Integrations
           </NavLink>
           <NavLink
-            href="/org/settings"
-            onClick={onClose}
-            className="!text-graphite !text-[15px] py-3 hover:!no-underline"
-          >
-            Team
-          </NavLink>
-          <NavLink
             href="/settings"
             onClick={onClose}
             className="!text-graphite !text-[15px] py-3 hover:!no-underline"
@@ -925,9 +901,6 @@ export function AppNav() {
             Dashboard
           </NavLink>
           <WorkbenchMenu />
-          <NavLink href="/org/settings" className="whitespace-nowrap">
-            Team
-          </NavLink>
           <NavLink href="/settings/api-keys" className="whitespace-nowrap">
             API Keys
           </NavLink>

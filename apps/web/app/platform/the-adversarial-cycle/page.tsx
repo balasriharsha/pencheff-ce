@@ -75,7 +75,10 @@ export default function AdversarialCyclePage() {
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
             { name: "Platform", path: "/platform/overview" },
-            { name: "The Adversarial Cycle", path: "/platform/the-adversarial-cycle" },
+            {
+              name: "The Adversarial Cycle",
+              path: "/platform/the-adversarial-cycle",
+            },
           ]),
           howToJsonLd,
         ])}
@@ -94,10 +97,13 @@ export default function AdversarialCyclePage() {
                 evidence-backed findings and demonstrated attack chains.
               </p>
               <div className="lp-article-cta">
-                <Link href="/signup" className="lp-btn lp-btn-arrow">
+                <Link href="/dashboard" className="lp-btn lp-btn-arrow">
                   Run a free assessment
                 </Link>
-                <Link href="/platform/methodology-v4-2" className="lp-btn lp-btn-ghost">
+                <Link
+                  href="/platform/methodology-v4-2"
+                  className="lp-btn lp-btn-ghost"
+                >
                   Read the full methodology
                 </Link>
               </div>

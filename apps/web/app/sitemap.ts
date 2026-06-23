@@ -31,30 +31,6 @@ const STATIC_PUBLIC_ROUTES = [
     changeFrequency: "weekly" as const,
     lastModified: daysAgo(0),
   },
-  {
-    path: "/privacy",
-    priority: 0.4,
-    changeFrequency: "yearly" as const,
-    lastModified: new Date("2025-06-01"),
-  },
-  {
-    path: "/terms",
-    priority: 0.4,
-    changeFrequency: "yearly" as const,
-    lastModified: new Date("2025-06-01"),
-  },
-  {
-    path: "/company/contact",
-    priority: 0.7,
-    changeFrequency: "monthly" as const,
-    lastModified: daysAgo(0),
-  },
-  {
-    path: "/company/leadership",
-    priority: 0.6,
-    changeFrequency: "yearly" as const,
-    lastModified: daysAgo(0),
-  },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
