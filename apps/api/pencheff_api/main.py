@@ -253,7 +253,8 @@ app.include_router(reports.router)
 # Extended scanning workflows
 app.include_router(schedules.router)
 app.include_router(assets.router)
-app.include_router(integrations.router)
+if settings.integrations_enabled:
+    app.include_router(integrations.router)
 app.include_router(sboms.router)
 app.include_router(dependencies.router)
 app.include_router(advisories.router)
@@ -266,7 +267,8 @@ app.include_router(proxy.router)
 app.include_router(comments.router)
 # GitHub repo scanning
 app.include_router(repos.router)
-app.include_router(github_webhooks.router)
+if settings.integrations_enabled:
+    app.include_router(github_webhooks.router)
 # Propose-fix → open-PR flow
 app.include_router(fix_proposals.router)
 app.include_router(agentic_fix.router)
@@ -279,8 +281,9 @@ app.include_router(intruder.router)
 app.include_router(notes.router)
 app.include_router(ws.router)
 # OpenTelemetry-related routers (see config.py observability_* knobs).
-app.include_router(otlp_ingest.router)
-app.include_router(observability_router.router)
+if settings.observability_ingest_enabled:
+    app.include_router(otlp_ingest.router)
+    app.include_router(observability_router.router)
 app.include_router(dashboard.router)
 app.include_router(compliance.router)
 

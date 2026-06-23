@@ -181,6 +181,14 @@ class Settings(BaseSettings):
     # autonomous-only path with deterministic fallback on engine failure.
     free_plan_option_3_quota: int = 10
 
+    # ── Paid integrations gate (GitHub / Jira / GitLab apps) ───────────
+    # Routers are still importable but only registered when True.
+    integrations_enabled: bool = Field(False, alias="INTEGRATIONS_ENABLED")
+
+    # ── Observability ingest gate (OTLP receivers + read API) ───────────
+    # Routers are still importable but only registered when True.
+    observability_ingest_enabled: bool = Field(False, alias="OBSERVABILITY_INGEST_ENABLED")
+
     # ── Swarm orchestrator (parallel multi-agent) ──────────────
     swarm_enabled: bool = Field(True, alias="SWARM_ENABLED")
 
