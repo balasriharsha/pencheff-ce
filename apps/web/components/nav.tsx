@@ -1140,7 +1140,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {!sidebarCollapsed && (
             <div className="px-4 py-3 shrink-0 border-t border-hairline">
               <p className="font-mono text-[10px] text-mist">
-                © 2025 Pencheff Technologies
+                © 2026 Magadha Group
               </p>
             </div>
           )}
