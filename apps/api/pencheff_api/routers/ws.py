@@ -4,9 +4,7 @@ Subscribes to the engagement's Redis pub/sub channel. Every WebSocket
 client receives every event published with ``publish_engagement_event``,
 plus presence broadcasts from peers connected to the same engagement.
 
-Auth: ``?token=<clerk_jwt>&engagement_id=<id>``. We re-use the existing
-get_current_user → workspace membership flow on connect; on subsequent
-messages we trust the connection scope.
+CE (no-auth): connects as the seeded single-tenant user unconditionally.
 """
 from __future__ import annotations
 
@@ -20,7 +18,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..auth.clerk import decode_clerk_jwt
+from ..auth.single_tenant import seed_ids
 from ..db.base import get_session
 from ..db.models import Engagement, EngagementMember, OrgMember, User
 from ..events import async_subscriber, engagement_channel, publish_engagement_event
@@ -29,22 +27,11 @@ router = APIRouter(prefix="/ws", tags=["ws"])
 log = logging.getLogger("pencheff.ws")
 
 
-async def _user_from_token(token: str, session: AsyncSession) -> User | None:
-    """Validate a Clerk JWT and return the matching local User.
-
-    Mirrors the get_current_user dependency without the Request shape — we
-    can't depend on ``get_current_user`` here because WebSocket auth flows
-    through the connect URL, not headers.
-    """
-    try:
-        payload = decode_clerk_jwt(token)
-    except Exception:
-        return None
-    sub = payload.get("sub")
-    if not sub:
-        return None
+async def _get_seeded_user(session: AsyncSession) -> User | None:
+    """Return the single-tenant seeded user (CE: no token required)."""
     from sqlalchemy import select
-    return (await session.execute(select(User).where(User.email == payload.get("email")))).scalar_one_or_none()
+    ids = await seed_ids(session)
+    return (await session.execute(select(User).where(User.id == ids["user_id"]))).scalar_one_or_none()
 
 
 async def _can_access_engagement(
@@ -68,10 +55,9 @@ async def _can_access_engagement(
 async def engagement_ws(
     websocket: WebSocket,
     engagement_id: str,
-    token: str = Query(default=""),
     session: AsyncSession = Depends(get_session),
 ):
-    user = await _user_from_token(token, session) if token else None
+    user = await _get_seeded_user(session)
     if user is None:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return

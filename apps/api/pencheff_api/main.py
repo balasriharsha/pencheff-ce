@@ -17,11 +17,9 @@ from .observability import init_observability
 init_observability("pencheff-api")
 
 from .routers import (
-    auth, billing, findings, reports, scans, targets,
-    # Org / workspace / membership
-    orgs, workspaces,
-    # Programmatic-access API keys (PENCHEFF_API_KEY)
-    api_keys,
+    findings, reports, scans, targets,
+    # Workspace / membership
+    workspaces,
     # Extended scanning workflows
     schedules, assets, integrations, sboms, dependencies, proxy, comments,
     # Phase 1.1c — advisory lookup + AI walkthrough on top of the
@@ -48,14 +46,12 @@ from .routers import (
     # LLM proxy that the desktop agentic runtime uses to reach
     # Pencheff's Sarvam key without ever seeing it raw.
     llm_proxy_agentic,
-    # Engagements + collaboration (the all-in-one buildout)
-    engagements, proxy_ingest, traffic, repeater, intruder, notes, ws, branding,
+    # Collaboration (engagement routers removed; ws/proxy_ingest/traffic/etc survive)
+    proxy_ingest, traffic, repeater, intruder, notes, ws,
     # LLM red-team share-by-link (public route, token-encoded)
     share as llm_share,
     # Unified finding stream — sortable single queue across all scan kinds
     unified_findings,
-    # Security Lake — OCSF Iceberg query API (findings/trends/correlate)
-    security_lake,
     # OpenTelemetry/HTTP ingest endpoints (used by the MCP plugin when
     # PENCHEFF_OBSERVABILITY_OTLP_URL points here).
     otlp_ingest,
@@ -246,20 +242,14 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     )
 
 
-app.include_router(auth.router)
-app.include_router(orgs.router)
 app.include_router(llm_providers.router)
-app.include_router(orgs.invite_router)
 app.include_router(workspaces.router)
-app.include_router(api_keys.router)
 app.include_router(targets.router)
 app.include_router(scans.router)
 app.include_router(llm_share.router)
 app.include_router(findings.router)
 app.include_router(unified_findings.router)
-app.include_router(security_lake.router)
 app.include_router(reports.router)
-app.include_router(billing.router)
 # Extended scanning workflows
 app.include_router(schedules.router)
 app.include_router(assets.router)
@@ -281,16 +271,13 @@ app.include_router(github_webhooks.router)
 app.include_router(fix_proposals.router)
 app.include_router(agentic_fix.router)
 app.include_router(llm_proxy_agentic.router)
-# Engagements + collaboration
-app.include_router(engagements.router)
-app.include_router(engagements.handshake_router)
+# Collaboration
 app.include_router(proxy_ingest.router)
 app.include_router(traffic.router)
 app.include_router(repeater.router)
 app.include_router(intruder.router)
 app.include_router(notes.router)
 app.include_router(ws.router)
-app.include_router(branding.router)
 # OpenTelemetry-related routers (see config.py observability_* knobs).
 app.include_router(otlp_ingest.router)
 app.include_router(observability_router.router)
