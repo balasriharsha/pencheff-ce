@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     # Triage / grading backend — used for false-positive filtering and
     # executive grading. Operator-supplied chat-completions endpoint.
     llm_api_key: str = ""
-    llm_base_url: str = "https://api.together.xyz/v1"
+    llm_base_url: str = ""
     llm_model: str = "MiniMaxAI/MiniMax-M2.7"
     llm_model_label: str = "MiniMax M2.7"  # display-only; used in UI
     llm_enabled: bool = True
@@ -58,7 +58,7 @@ class Settings(BaseSettings):
     # is empty.
     agentic_fix_enabled: bool = True
     agentic_fix_api_key: str = ""  # bearer token for the chat-completions endpoint
-    agentic_fix_base_url: str = "https://api.sarvam.ai/v1"
+    agentic_fix_base_url: str = ""
     agentic_fix_model: str = "sarvam-105b"
     agentic_fix_max_iterations: int = 60
     # Sarvam's starter tier caps max_tokens at 4096 for sarvam-105b
@@ -80,7 +80,7 @@ class Settings(BaseSettings):
     # can be sized differently. Defaults to DeepSeek v4-flash via its
     # OpenAI-compatible chat-completions endpoint.
     fix_llm_api_key: str = ""
-    fix_llm_base_url: str = "https://api.deepseek.com/v1"
+    fix_llm_base_url: str = ""
     # Default / fallback model. Kept for callers without plan context
     # (e.g. triage_llm). Per-plan fix routing uses the two fields below.
     fix_llm_model: str = "deepseek-v4-flash"
@@ -124,7 +124,7 @@ class Settings(BaseSettings):
     # request shape; the operator points it at whichever backend they
     # have access to. End-user surfaces never reference the backend.
     agent_llm_api_key: str = ""
-    agent_llm_base_url: str = "https://ollama.com/v1"
+    agent_llm_base_url: str = ""
     agent_llm_model: str = "kimi-k2.6:cloud"
     agent_llm_max_tokens: int = 8192
     agent_llm_usage_mode: str = "tokens"
@@ -139,7 +139,7 @@ class Settings(BaseSettings):
     agent_llm_session_tokens_per_percent: float = 260954.0
     agent_llm_weekly_tokens_per_percent: float = 1565722.0
     agent_fallback_llm_api_key: str = ""
-    agent_fallback_llm_base_url: str = "https://api.sarvam.ai/v1"
+    agent_fallback_llm_base_url: str = ""
     agent_fallback_llm_model: str = "sarvam-105b"
     # Sarvam's ``starter`` subscription tier caps max_tokens at 4096 for
     # sarvam-105b. Sending a higher value yields HTTP 400 on every chat
@@ -280,6 +280,10 @@ class Settings(BaseSettings):
         if v == "" or v is None:
             return cls.model_fields[info.field_name].default
         return v
+
+    @property
+    def ai_available(self) -> bool:
+        return bool(self.llm_api_key)
 
     @property
     def sync_database_url(self) -> str:

@@ -17,6 +17,7 @@ from .observability import init_observability
 init_observability("pencheff-api")
 
 from .routers import (
+    capabilities,
     findings, reports, scans, targets,
     # Workspace / membership
     workspaces,
@@ -242,6 +243,7 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     )
 
 
+app.include_router(capabilities.router)
 app.include_router(llm_providers.router)
 app.include_router(workspaces.router)
 app.include_router(targets.router)
