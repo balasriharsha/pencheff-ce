@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { UserButton, useAuth, useUser } from "@clerk/react";
 import { Button, Input } from "@/components/brutal";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -189,20 +188,6 @@ function KeyIcon() {
     </svg>
   );
 }
-function BillingIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden
-    >
-      <rect x="1.5" y="3.5" width="13" height="9" rx="0.5" />
-      <path d="M1.5 7h13M5 10.5h2" />
-    </svg>
-  );
-}
 function SettingsIcon() {
   return (
     <svg
@@ -266,7 +251,6 @@ const SETTINGS_NAV = [
   { href: "/org/settings", label: "Team", icon: <TeamIcon /> },
   { href: "/settings/api-keys", label: "API Keys", icon: <KeyIcon /> },
   { href: "/settings", label: "Settings", icon: <SettingsIcon /> },
-  { href: "/billing", label: "Billing", icon: <BillingIcon /> },
 ] as const;
 
 // WORKBENCH_ITEMS kept for mobile menu compatibility
@@ -280,30 +264,6 @@ const WORKBENCH_ITEMS: { href: string; label: string }[] = [
 ];
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
-
-function currentPlanKey(has: ReturnType<typeof useAuth>["has"]): string {
-  if (!has) return "free_user";
-  if (has({ plan: "team" })) return "team";
-  if (has({ plan: "pro" })) return "pro";
-  return "free_user";
-}
-
-const PLAN_LABEL: Record<string, string> = {
-  free_user: "FREE",
-  pro: "Pro",
-  team: "Team",
-};
-
-const userButtonAppearance = {
-  elements: {
-    avatarBox: {
-      width: 32,
-      height: 32,
-      border: "1px solid #E5E1D6",
-      borderRadius: "2px",
-    },
-  },
-};
 
 function switchWorkspace(orgId: string | null, workspaceId: string | null) {
   try {
@@ -447,10 +407,7 @@ function WorkspaceSwitcherControls({
     />
   );
 
-  const wsOptions = [
-    ...workspaces.map((w) => ({ value: w.id, label: w.name })),
-    { value: "__new__", label: "＋ New workspace…" },
-  ];
+  const wsOptions = workspaces.map((w) => ({ value: w.id, label: w.name }));
   const wsValue = activeWorkspace?.id ?? workspaces[0]?.id ?? "";
   const wsSelect = (
     <SwitchDropdown
@@ -461,10 +418,6 @@ function WorkspaceSwitcherControls({
       maxWidth="max-w-[160px]"
       dark={dark}
       onChange={(v) => {
-        if (v === "__new__") {
-          window.location.href = "/workspaces/new";
-          return;
-        }
         switchWorkspace(activeOrg?.id ?? null, v);
       }}
     />
@@ -546,31 +499,6 @@ function SidebarLink({
       )}
       {!collapsed && <span className="truncate">{label}</span>}
     </Link>
-  );
-}
-
-// ─── Upgrade card ────────────────────────────────────────────────────────────
-
-function UpgradeCard() {
-  return (
-    <div className="mx-3 mb-4 p-4 border border-gilt/30 rounded-sm bg-gilt/[0.04] shrink-0">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="w-4 h-4 text-gilt shrink-0">
-          <ShieldIcon />
-        </span>
-        <span className="font-body font-semibold text-[13px] text-ink">
-          Upgrade to Pro
-        </span>
-      </div>
-      <p className="font-body text-[11px] text-slate mb-3 leading-snug">
-        Unlock advanced scans, automations and more.
-      </p>
-      <Link href="/billing">
-        <button className="w-full border border-gilt/60 rounded-sm px-3 py-1.5 font-body text-[12px] text-gilt2 font-medium tracking-[0.04em] hover:border-gilt hover:bg-gilt/10 transition-colors">
-          Upgrade Now
-        </button>
-      </Link>
-    </div>
   );
 }
 
@@ -903,15 +831,7 @@ function WorkbenchMenu() {
   );
 }
 
-function MobileMenu({
-  open,
-  onClose,
-  plan,
-}: {
-  open: boolean;
-  onClose: () => void;
-  plan: string | null;
-}) {
+function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
   return (
     <div
@@ -966,13 +886,6 @@ function MobileMenu({
           >
             API Keys
           </NavLink>
-          <NavLink
-            href="/billing"
-            onClick={onClose}
-            className="!text-graphite !text-[15px] py-3 hover:!no-underline"
-          >
-            Billing
-          </NavLink>
           <a
             href={DOCS_URL}
             target="_blank"
@@ -983,17 +896,6 @@ function MobileMenu({
             Docs ↗
           </a>
         </div>
-        {plan && (
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-[0.12em] text-mist">
-              Plan
-            </span>
-            <span className="inline-flex items-center gap-1 border border-hairline rounded-sm px-2 py-0.5 font-body text-[11px] font-medium uppercase tracking-[0.16em] text-slate bg-vellum">
-              <span className="w-1 h-1 rounded-full bg-gilt" aria-hidden />
-              {PLAN_LABEL[plan] ?? plan}
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -1002,8 +904,6 @@ function MobileMenu({
 // ─── App nav (mobile top bar) ────────────────────────────────────────────────
 
 export function AppNav() {
-  const { isLoaded, has } = useAuth();
-  const plan = isLoaded ? currentPlanKey(has) : null;
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -1031,22 +931,11 @@ export function AppNav() {
           <NavLink href="/settings/api-keys" className="whitespace-nowrap">
             API Keys
           </NavLink>
-          <NavLink href="/billing" className="whitespace-nowrap">
-            Billing
-          </NavLink>
           <DocsLink className="whitespace-nowrap" />
-          {plan && (
-            <span className="inline-flex items-center gap-1 border border-hairline rounded-sm px-2 py-0.5 font-body text-[11px] font-medium uppercase tracking-[0.16em] text-slate bg-vellum whitespace-nowrap">
-              <span className="w-1 h-1 rounded-full bg-gilt" aria-hidden />
-              {PLAN_LABEL[plan] ?? plan}
-            </span>
-          )}
           <ThemeToggle variant="nav" />
-          <UserButton appearance={userButtonAppearance} />
         </div>
         <div className="flex md:hidden items-center gap-3 shrink-0">
           <ThemeToggle variant="nav" />
-          <UserButton appearance={userButtonAppearance} />
           <button
             type="button"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -1059,7 +948,7 @@ export function AppNav() {
           </button>
         </div>
       </div>
-      <MobileMenu open={open} onClose={() => setOpen(false)} plan={plan} />
+      <MobileMenu open={open} onClose={() => setOpen(false)} />
     </nav>
   );
 }
@@ -1067,9 +956,6 @@ export function AppNav() {
 // ─── App shell (desktop sidebar + header) ────────────────────────────────────
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { isLoaded, has } = useAuth();
-  const { user } = useUser();
-  const plan = isLoaded ? currentPlanKey(has) : null;
   const pathname = usePathname();
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -1304,9 +1190,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
 
-          {/* Upgrade card — only when expanded */}
-          {!sidebarCollapsed && plan === "free_user" && <UpgradeCard />}
-
           {/* Footer — only when expanded */}
           {!sidebarCollapsed && (
             <div className="px-4 py-3 shrink-0 border-t border-hairline">
@@ -1411,28 +1294,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
               {/* Theme toggle */}
               <ThemeToggle variant="nav" />
-
-              {/* Plan badge */}
-              {plan && (
-                <span className="inline-flex items-center gap-1 border border-hairline rounded-sm px-2 py-0.5 font-body text-[11px] font-medium uppercase tracking-[0.16em] text-slate bg-vellum whitespace-nowrap">
-                  <span className="w-1 h-1 rounded-full bg-gilt" aria-hidden />
-                  {PLAN_LABEL[plan] ?? plan}
-                </span>
-              )}
-
-              {/* User name + role */}
-              {user && (
-                <div className="flex flex-col items-end leading-tight">
-                  <span className="font-body text-[13px] text-ink font-medium">
-                    {user.firstName ?? user.username ?? "User"}
-                  </span>
-                  <span className="font-mono text-[10px] text-mist uppercase tracking-[0.12em]">
-                    Owner
-                  </span>
-                </div>
-              )}
-
-              <UserButton appearance={userButtonAppearance} />
             </div>
           </header>
 
@@ -1447,7 +1308,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 // ─── Marketing nav ────────────────────────────────────────────────────────────
 
 export function MarketingNav() {
-  const { isLoaded, isSignedIn } = useAuth();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -1461,22 +1321,6 @@ export function MarketingNav() {
         <Monogram href="/" />
         <div className="hidden md:flex items-center gap-6">
           <DocsLink />
-          {isLoaded && !isSignedIn && (
-            <>
-              <NavLink href="/login">Sign in</NavLink>
-              <Link href="/signup">
-                <Button variant="pink" className="text-[12px]">
-                  Open an account
-                </Button>
-              </Link>
-            </>
-          )}
-          {isLoaded && isSignedIn && (
-            <>
-              <NavLink href="/dashboard">Dashboard</NavLink>
-              <UserButton appearance={userButtonAppearance} />
-            </>
-          )}
         </div>
         <button
           type="button"
@@ -1499,35 +1343,6 @@ export function MarketingNav() {
           >
             Docs ↗
           </a>
-          {isLoaded && !isSignedIn && (
-            <>
-              <NavLink
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="!text-graphite !text-[15px] py-3 hover:!no-underline"
-              >
-                Sign in
-              </NavLink>
-              <Link
-                href="/signup"
-                onClick={() => setOpen(false)}
-                className="py-3"
-              >
-                <Button variant="pink" className="text-[13px] w-full">
-                  Open an account
-                </Button>
-              </Link>
-            </>
-          )}
-          {isLoaded && isSignedIn && (
-            <NavLink
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="!text-ink !text-[15px] py-3 hover:!no-underline"
-            >
-              Dashboard
-            </NavLink>
-          )}
         </div>
       )}
     </nav>

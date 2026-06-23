@@ -8,7 +8,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useAuth } from "@clerk/react";
 import {
   ACTIVE_ORG_STORAGE_KEY,
   ACTIVE_WORKSPACE_STORAGE_KEY,
@@ -76,7 +75,6 @@ function writeStored(key: string, value: string | null) {
 }
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
-  const { isSignedIn, isLoaded } = useAuth();
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [orgs, setOrgs] = useState<Org[]>([]);
@@ -117,14 +115,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   );
 
   const refresh = useCallback(async () => {
-    if (!isSignedIn) {
-      setOrgs([]);
-      setWorkspaces([]);
-      setActiveOrgIdState(null);
-      setActiveWorkspaceIdState(null);
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     try {
       const [nextOrgs, nextWs] = await Promise.all([
@@ -165,14 +155,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [isSignedIn, activeOrgId, activeWorkspaceId]);
+  }, [activeOrgId, activeWorkspaceId]);
 
   useEffect(() => {
-    if (!isLoaded) return;
     refresh();
-    // refresh is intentionally stable per-dep; refetch on isLoaded/isSignedIn.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, isSignedIn]);
+  }, []);
 
   const activeOrg = orgs.find((o) => o.id === activeOrgId) ?? null;
   const activeWorkspace =

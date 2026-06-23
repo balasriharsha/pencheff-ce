@@ -71,10 +71,7 @@ export function HomeNavigation() {
         {NAV_MENUS.map((menu) => (
           <MegaNavMenu menu={menu} key={menu.label} />
         ))}
-        <Link href="/login">Sign in</Link>
-        <Link href="/signup" className="home-nav-cta">
-          Start free
-        </Link>
+        <Link href="/dashboard">Dashboard</Link>
       </div>
     </nav>
   );

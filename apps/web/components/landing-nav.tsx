@@ -2,20 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { UserButton, useAuth } from "@clerk/react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const userButtonAppearance = {
-  elements: {
-    avatarBox: {
-      width: 32,
-      height: 32,
-      border: "1.5px solid #0B1F66",
-      borderRadius: "10px",
-    },
-  },
-};
 
 // LandingMasthead is exported for backward compatibility but renders nothing —
 // the date strip was removed during the design refresh. Kept as a no-op so
@@ -815,7 +803,6 @@ function MegaPanel({
 }
 
 export function LandingNav() {
-  const { isLoaded, isSignedIn } = useAuth();
   const [openKey, setOpenKey] = useState<MegaKey | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState<MegaKey | "root" | null>(
@@ -1125,25 +1112,9 @@ export function LandingNav() {
             >
               Docs ↗
             </a>
-            {!isSignedIn && (
-              <>
-                <Link href="/login" className="lp-mobile-link" onClick={close}>
-                  Sign in
-                </Link>
-                <Link href="/signup" className="lp-mobile-link" onClick={close}>
-                  Open an account
-                </Link>
-              </>
-            )}
-            {isSignedIn && (
-              <Link
-                href="/dashboard"
-                className="lp-mobile-link"
-                onClick={close}
-              >
-                Dashboard
-              </Link>
-            )}
+            <Link href="/dashboard" className="lp-mobile-link" onClick={close}>
+              Dashboard
+            </Link>
           </div>
         </div>
       </div>
@@ -1199,32 +1170,13 @@ export function LandingNav() {
               </span>
             </button>
             <ThemeToggle variant="landing" />
-            {isLoaded && !isSignedIn && (
-              <>
-                <Link
-                  className="lp-nav-signin"
-                  href="/login"
-                  style={{ whiteSpace: "nowrap" }}
-                >
-                  Sign in
-                </Link>
-                <Link
-                  className="lp-btn lp-btn-pink lp-btn-arrow"
-                  href="/signup"
-                  style={{ whiteSpace: "nowrap" }}
-                >
-                  Open an account
-                </Link>
-              </>
-            )}
-            {isLoaded && isSignedIn && (
-              <>
-                <Link className="lp-nav-signin" href="/dashboard">
-                  Dashboard
-                </Link>
-                <UserButton appearance={userButtonAppearance} />
-              </>
-            )}
+            <Link
+              className="lp-nav-signin"
+              href="/dashboard"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              Dashboard
+            </Link>
           </div>
         </div>
 

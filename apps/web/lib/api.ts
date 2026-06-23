@@ -12,72 +12,6 @@ const API = process.env.NEXT_PUBLIC_API_URL || "/api";
  */
 const STREAM_API = process.env.NEXT_PUBLIC_API_DIRECT_URL || API;
 
-type ClerkSession = {
-  getToken: (opts?: { template?: string }) => Promise<string | null>;
-};
-type ClerkGlobal = {
-  loaded?: boolean;
-  load?: () => Promise<void>;
-  session?: ClerkSession | null;
-};
-
-/**
- * Retrieve the current Clerk session JWT (if any). Used as the Authorization
- * bearer for backend calls and as a query-param token for SSE streams.
- *
- * Tokens are memoized in-process for ~50s. Pages that fan out 3+ parallel
- * fetches (dashboard, /repos) used to round-trip Clerk's WebCrypto-backed
- * getToken() call once per fetch — typically 80–250ms each — which serialised
- * the page load. Sharing a single in-flight Promise lets concurrent callers
- * await the same Clerk lookup, and the resolved token is reused until just
- * before its 60s default lifetime.
- */
-const TOKEN_TTL_MS = 50_000;
-let cachedToken: { value: string | null; expiresAt: number } | null = null;
-let inflight: Promise<string | null> | null = null;
-
-async function getAuthToken(): Promise<string | null> {
-  if (typeof window === "undefined") return null;
-  const now = Date.now();
-  if (cachedToken && cachedToken.expiresAt > now) {
-    return cachedToken.value;
-  }
-  if (inflight) return inflight;
-
-  inflight = (async () => {
-    try {
-      const clerk = (window as unknown as { Clerk?: ClerkGlobal }).Clerk;
-      if (!clerk) return null;
-      if (!clerk.loaded && clerk.load) {
-        try {
-          await clerk.load();
-        } catch {
-          return null;
-        }
-      }
-      try {
-        const tok = (await clerk.session?.getToken?.()) ?? null;
-        cachedToken = { value: tok, expiresAt: Date.now() + TOKEN_TTL_MS };
-        return tok;
-      } catch {
-        return null;
-      }
-    } finally {
-      inflight = null;
-    }
-  })();
-  return inflight;
-}
-
-/**
- * Drop any cached JWT — call this on sign-out or when the API returns 401
- * for the current session, so the next request forces a fresh token.
- */
-export function clearAuthTokenCache(): void {
-  cachedToken = null;
-  inflight = null;
-}
-
 /**
  * Key used by the WorkspaceProvider to persist the currently-active
  * workspace. Read at request time so every ``api()`` call automatically
@@ -89,7 +23,8 @@ export const ACTIVE_ORG_STORAGE_KEY = "pencheff.activeOrgId";
 // commission-scan modal so operators don't retype the engagement-letter
 // boilerplate on every assessment. Per-device, captured on successful
 // scan submit only (we don't persist abandoned drafts).
-export const AUTHORIZATION_STATEMENT_STORAGE_KEY = "pencheff.lastAuthorizationStatement";
+export const AUTHORIZATION_STATEMENT_STORAGE_KEY =
+  "pencheff.lastAuthorizationStatement";
 
 function getActiveWorkspaceId(): string | null {
   if (typeof window === "undefined") return null;
@@ -102,7 +37,7 @@ function getActiveWorkspaceId(): string | null {
 
 export async function api<T = unknown>(
   path: string,
-  init: RequestInit & { json?: unknown; direct?: boolean } = {}
+  init: RequestInit & { json?: unknown; direct?: boolean } = {},
 ): Promise<T> {
   const { direct, json, ...fetchInit } = init;
   // Slow LLM-backed endpoints should bypass the Next.js rewrite proxy,
@@ -115,8 +50,6 @@ export async function api<T = unknown>(
     "Content-Type": "application/json",
     ...(fetchInit.headers as Record<string, string> | undefined),
   };
-  const tok = await getAuthToken();
-  if (tok) headers["Authorization"] = `Bearer ${tok}`;
   // Scope every request to the currently-active workspace. The backend
   // looks up the workspace via get_active_workspace() and reject any ID
   // the caller isn't a member of.
@@ -130,17 +63,6 @@ export async function api<T = unknown>(
   });
 
   if (res.status === 401) {
-    // If Clerk says we're signed in, the 401 is a backend authorisation
-    // problem, not a missing session — surface it rather than bouncing to
-    // /login (which would just re-authenticate with Clerk and loop).
-    // Either way, evict the cached JWT so the next call picks up a fresh
-    // one (the previous token may have expired between cache and use).
-    clearAuthTokenCache();
-    const clerk = (window as unknown as { Clerk?: { session?: unknown } })
-      .Clerk;
-    if (!clerk?.session && typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
     throw new Error("unauthorized");
   }
   if (!res.ok) throw await apiError(res);
@@ -188,27 +110,27 @@ async function apiError(res: Response): Promise<ApiError> {
 }
 
 /**
- * Build a streaming (SSE) URL with the Clerk session token embedded as a
- * query parameter — EventSource cannot set Authorization headers.
+ * Build a streaming (SSE) URL with the workspace ID embedded as a query
+ * parameter — EventSource cannot set custom headers.
  */
 export async function streamUrl(path: string): Promise<string> {
-  const tok = (await getAuthToken()) ?? "";
   const ws = getActiveWorkspaceId();
   const sep = path.includes("?") ? "&" : "?";
-  const base = `${STREAM_API}${path}${sep}token=${encodeURIComponent(tok)}`;
-  return ws ? `${base}&workspace_id=${encodeURIComponent(ws)}` : base;
+  return ws
+    ? `${STREAM_API}${path}${sep}workspace_id=${encodeURIComponent(ws)}`
+    : `${STREAM_API}${path}`;
 }
 
 /**
  * Authenticated file download. A plain ``window.location.href`` navigation
- * can't attach the Clerk bearer token, so we fetch the bytes with auth and
- * stream them to the user via an object URL + anchor click.
+ * can't attach headers, so we fetch the bytes and stream them to the user
+ * via an object URL + anchor click.
  */
-export async function downloadFile(path: string, suggestedName?: string): Promise<void> {
-  const tok = await getAuthToken();
-  const res = await fetch(`${API}${path}`, {
-    headers: tok ? { Authorization: `Bearer ${tok}` } : {},
-  });
+export async function downloadFile(
+  path: string,
+  suggestedName?: string,
+): Promise<void> {
+  const res = await fetch(`${API}${path}`);
   if (!res.ok) {
     throw await apiError(res);
   }
@@ -216,7 +138,7 @@ export async function downloadFile(path: string, suggestedName?: string): Promis
   const name =
     suggestedName ??
     parseFilenameFromContentDisposition(
-      res.headers.get("content-disposition")
+      res.headers.get("content-disposition"),
     ) ??
     path.split("/").pop() ??
     "download";
@@ -232,7 +154,9 @@ export async function downloadFile(path: string, suggestedName?: string): Promis
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function parseFilenameFromContentDisposition(value: string | null): string | null {
+function parseFilenameFromContentDisposition(
+  value: string | null,
+): string | null {
   if (!value) return null;
   const match = /filename\*?=(?:UTF-8''|")?([^";]+)/i.exec(value);
   if (!match) return null;
