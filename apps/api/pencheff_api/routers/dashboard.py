@@ -24,7 +24,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..auth.deps import get_active_workspace, require_scope
@@ -101,6 +101,15 @@ class FixConversionOut(BaseModel):
     findings_with_applied_fix: int
     proposal_coverage_pct: float
     apply_coverage_pct: float
+
+
+class AgentCoverageEntry(BaseModel):
+    label: str
+    pct: int
+
+
+class AgentCoverageOut(BaseModel):
+    coverage: list[AgentCoverageEntry]
 
 
 class TargetTrendScan(BaseModel):
@@ -581,5 +590,245 @@ async def target_trend(
         open_total=int(open_total or 0),
         fixed_total=int(fixed_total or 0),
     )
+
+
+# ── DAST target kinds (recon runs on all of these; DAST specifically on web/api) ──
+_DAST_KINDS = {
+    "url", "web_app", "rest_api", "graphql", "websocket", "grpc",
+}
+_ALL_URL_KINDS = _DAST_KINDS | {"host"}  # recon covers all non-llm/non-repo kinds
+
+
+@router.get("/agent-coverage", response_model=AgentCoverageOut)
+async def agent_coverage(
+    workspace: Workspace = Depends(get_active_workspace),
+    session: AsyncSession = Depends(get_session),
+) -> AgentCoverageOut:
+    """Agent coverage % for the last 30 days, per capability.
+
+    Coverage % = round(exercised_scans / total_scans * 100).
+    Total scans = Scan rows + RepoScan rows created in last 30d for this workspace.
+
+    Per-capability definitions:
+    - Recon:       Scan rows whose Target.kind is NOT "llm" (recon runs on all URL/host scans).
+    - DAST:        Scan rows whose Target.kind is a web/API kind (url, web_app, rest_api,
+                   graphql, websocket, grpc).
+    - SAST:        RepoScan rows where "semgrep" in scanners.
+    - Secrets:     RepoScan rows where "gitleaks" in scanners.
+    - SCA:         RepoScan rows where "osv" or "ghsa" in scanners.
+    - IaC:         RepoScan rows where "trivy_iac" or "checkov" in scanners.
+    - Container:   RepoScan rows where "trivy" in scanners OR Scan rows with
+                   Target.kind == "container_image".
+    - LLM Red Team: Scan rows where Target.kind == "llm".
+    - Reports:     Scans (Scan + RepoScan) in 30d with a terminal status
+                   (Scan.status == "done", RepoScan.status == "succeeded").
+    - Remediation: Scans in 30d that have >=1 FixProposal row (scan_id or
+                   repo_scan_id). Approximation: counts distinct scan IDs
+                   referenced in fix_proposals within the workspace in 30d.
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+
+    # ── Total scans in last 30d ──────────────────────────────────────
+    total_url_scans: int = (
+        await session.execute(
+            select(func.count(Scan.id)).where(
+                Scan.workspace_id == workspace.id,
+                Scan.created_at >= cutoff,
+            )
+        )
+    ).scalar_one() or 0
+
+    total_repo_scans: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+            )
+        )
+    ).scalar_one() or 0
+
+    total = total_url_scans + total_repo_scans
+
+    def _pct(exercised: int) -> int:
+        if total == 0:
+            return 0
+        return round(exercised * 100 / total)
+
+    # ── Per-capability counts ────────────────────────────────────────
+
+    # Recon: Scan rows where Target.kind is NOT "llm"
+    recon_count: int = (
+        await session.execute(
+            select(func.count(Scan.id))
+            .join(Target, Target.id == Scan.target_id)
+            .where(
+                Scan.workspace_id == workspace.id,
+                Scan.created_at >= cutoff,
+                Target.kind != "llm",
+            )
+        )
+    ).scalar_one() or 0
+
+    # DAST: Scan rows where Target.kind in DAST_KINDS
+    dast_count: int = (
+        await session.execute(
+            select(func.count(Scan.id))
+            .join(Target, Target.id == Scan.target_id)
+            .where(
+                Scan.workspace_id == workspace.id,
+                Scan.created_at >= cutoff,
+                Target.kind.in_(_DAST_KINDS),
+            )
+        )
+    ).scalar_one() or 0
+
+    # SAST: RepoScan rows where "semgrep" in scanners
+    sast_count: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+                RepoScan.scanners.contains(["semgrep"]),
+            )
+        )
+    ).scalar_one() or 0
+
+    # Secrets: RepoScan rows where "gitleaks" in scanners
+    secrets_count: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+                RepoScan.scanners.contains(["gitleaks"]),
+            )
+        )
+    ).scalar_one() or 0
+
+    # SCA: RepoScan rows where "osv" OR "ghsa" in scanners (single query, no double-count)
+    sca_count: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+                or_(
+                    RepoScan.scanners.contains(["osv"]),
+                    RepoScan.scanners.contains(["ghsa"]),
+                ),
+            )
+        )
+    ).scalar_one() or 0
+
+    # IaC: RepoScan rows where "trivy_iac" OR "checkov" in scanners
+    iac_count: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+                or_(
+                    RepoScan.scanners.contains(["trivy_iac"]),
+                    RepoScan.scanners.contains(["checkov"]),
+                ),
+            )
+        )
+    ).scalar_one() or 0
+
+    # Container: RepoScan rows where "trivy" in scanners OR Scan rows where
+    # Target.kind == "container_image"
+    container_repo: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+                RepoScan.scanners.contains(["trivy"]),
+            )
+        )
+    ).scalar_one() or 0
+    container_url: int = (
+        await session.execute(
+            select(func.count(Scan.id))
+            .join(Target, Target.id == Scan.target_id)
+            .where(
+                Scan.workspace_id == workspace.id,
+                Scan.created_at >= cutoff,
+                Target.kind == "container_image",
+            )
+        )
+    ).scalar_one() or 0
+    container_count = container_repo + container_url
+
+    # LLM Red Team: Scan rows where Target.kind == "llm"
+    llm_count: int = (
+        await session.execute(
+            select(func.count(Scan.id))
+            .join(Target, Target.id == Scan.target_id)
+            .where(
+                Scan.workspace_id == workspace.id,
+                Scan.created_at >= cutoff,
+                Target.kind == "llm",
+            )
+        )
+    ).scalar_one() or 0
+
+    # Reports: scans with terminal status (Scan.status=="done", RepoScan.status=="succeeded")
+    reports_url: int = (
+        await session.execute(
+            select(func.count(Scan.id)).where(
+                Scan.workspace_id == workspace.id,
+                Scan.created_at >= cutoff,
+                Scan.status == "done",
+            )
+        )
+    ).scalar_one() or 0
+    reports_repo: int = (
+        await session.execute(
+            select(func.count(RepoScan.id)).where(
+                RepoScan.workspace_id == workspace.id,
+                RepoScan.created_at >= cutoff,
+                RepoScan.status == "succeeded",
+            )
+        )
+    ).scalar_one() or 0
+    reports_count = reports_url + reports_repo
+
+    # Remediation: scans in 30d that have >=1 FixProposal.
+    # Count distinct scan_id values from fix_proposals scoped to this workspace
+    # where the parent scan was created in the last 30d.
+    remediation_url: int = (
+        await session.execute(
+            select(func.count(func.distinct(FixProposal.scan_id)))
+            .join(Scan, Scan.id == FixProposal.scan_id)
+            .where(
+                FixProposal.workspace_id == workspace.id,
+                FixProposal.scan_id.is_not(None),
+                Scan.created_at >= cutoff,
+            )
+        )
+    ).scalar_one() or 0
+    remediation_repo: int = (
+        await session.execute(
+            select(func.count(func.distinct(FixProposal.repo_scan_id)))
+            .join(RepoScan, RepoScan.id == FixProposal.repo_scan_id)
+            .where(
+                FixProposal.workspace_id == workspace.id,
+                FixProposal.repo_scan_id.is_not(None),
+                RepoScan.created_at >= cutoff,
+            )
+        )
+    ).scalar_one() or 0
+    remediation_count = remediation_url + remediation_repo
+
+    entries = [
+        AgentCoverageEntry(label="Recon", pct=_pct(recon_count)),
+        AgentCoverageEntry(label="DAST", pct=_pct(dast_count)),
+        AgentCoverageEntry(label="SAST", pct=_pct(sast_count)),
+        AgentCoverageEntry(label="Secrets", pct=_pct(secrets_count)),
+        AgentCoverageEntry(label="SCA", pct=_pct(sca_count)),
+        AgentCoverageEntry(label="IaC", pct=_pct(iac_count)),
+        AgentCoverageEntry(label="Container", pct=_pct(container_count)),
+        AgentCoverageEntry(label="LLM Red Team", pct=_pct(llm_count)),
+        AgentCoverageEntry(label="Reports", pct=_pct(reports_count)),
+        AgentCoverageEntry(label="Remediation", pct=_pct(remediation_count)),
+    ]
+    return AgentCoverageOut(coverage=entries)
 
 
