@@ -35,20 +35,6 @@ class Settings(BaseSettings):
 
     fernet_key: str = Field(default="")  # generate with Fernet.generate_key(); base64 url-safe 32 bytes
 
-    google_client_id: str = ""
-    google_client_secret: str = ""
-    google_redirect_uri: str = "http://localhost:8000/auth/oauth/google/callback"
-
-    stripe_secret_key: str = ""
-    stripe_webhook_secret: str = ""
-    stripe_price_pro: str = ""
-    stripe_price_team: str = ""
-
-    # Clerk — used for verifying session JWTs and fetching user details
-    clerk_publishable_key: str = ""
-    clerk_secret_key: str = ""
-    clerk_jwks_url: str = ""  # optional override; normally derived from publishable key
-
     # Triage / grading backend — used for false-positive filtering and
     # executive grading. Operator-supplied chat-completions endpoint.
     llm_api_key: str = ""
