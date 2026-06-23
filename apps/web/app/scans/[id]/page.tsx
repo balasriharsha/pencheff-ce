@@ -686,24 +686,6 @@ export default function ScanDetailPage() {
           </div>
         )}
 
-        {scan.status === "done" && (
-          <div className="mt-8 border-t border-hairline pt-6">
-            <p className="eyebrow-gilt mb-3 text-[10px]">Compliance mapping</p>
-            <p className="mb-3 font-mono text-[12px] text-mist">
-              Every active finding fanned out across the frameworks that match
-              this target&apos;s asset class — OWASP, PCI-DSS, NIST, SOC 2, ISO
-              27001, HIPAA for URL targets; OWASP LLM Top 10, MITRE ATLAS, NIST
-              AI RMF, EU AI Act, GDPR, ISO/IEC 42001:2023 for LLM endpoints.
-            </p>
-            <Link
-              href={`/scans/${scan.id}/compliance`}
-              className="inline-block border border-graphite px-4 py-2 font-mono text-[12px] uppercase tracking-[0.08em] hover:bg-graphite hover:text-white"
-            >
-              View compliance mapping →
-            </Link>
-          </div>
-        )}
-
         {scan.status === "done" && scan.target_kind === "llm" && (
           <div className="mt-8 border-t border-hairline pt-6">
             <p className="eyebrow-gilt mb-3 text-[10px]">

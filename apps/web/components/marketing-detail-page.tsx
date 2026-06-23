@@ -274,24 +274,22 @@ const PROFILES: Record<string, DetailProfile> = {
       "apps/docs/pages/quickstart/llm-redteam.mdx",
       "apps/docs/pages/features/sentry.mdx",
       "apps/docs/pages/features/swarm.mdx",
-      "apps/docs/pages/features/compliance-mapping.mdx",
     ],
   },
   reporting: {
-    badge: "Risk, reporting, and compliance",
+    badge: "Risk and reporting",
     summary:
-      "Reporting turns raw scanner output into evidence-backed decisions: executive posture, technical dossiers, compliance mappings, retest history, threat models, and clear remediation ownership.",
+      "Reporting turns raw scanner output into evidence-backed decisions: executive posture, technical dossiers, retest history, threat models, and clear remediation ownership.",
     capabilities: [
       "Executive dashboard, letter grade, risk trends, severity rollups, and portfolio posture.",
       "Technical dossier with findings, reproduction, affected components, remediation, evidence, and re-examination state.",
-      "Compliance mapping for OWASP, PCI DSS, SOC 2, NIST, ISO 27001, HIPAA, OWASP LLM, MITRE ATLAS, NIST AI RMF, EU AI Act, and GDPR.",
       "Threat modeling with STRIDE, DREAD, attack trees, abuse cases, mitigations, and scan context.",
       "Unified findings stream, AI triage, advisory enrichment, comments, suppressions, and audit appendices.",
     ],
     workflow: [
       "Collect findings from runtime, repo, supply chain, infrastructure, AI, and manual sources.",
       "Normalize severity, confidence, category, exploitability, reachability, and owner state.",
-      "Generate executive, engineering, compliance, or retest views from the same source record.",
+      "Generate executive, engineering, or retest views from the same source record.",
       "Track suppression, comments, fixes, re-examinations, and residual risk across scan history.",
       "Export reports and feed integrations without losing the underlying evidence chain.",
     ],
@@ -308,7 +306,6 @@ const PROFILES: Record<string, DetailProfile> = {
       "Executives and auditors can read summaries while engineers keep deep evidence.",
     ],
     docs: [
-      "apps/docs/pages/features/compliance-mapping.mdx",
       "apps/docs/pages/features/threat-model.mdx",
       "apps/docs/pages/features/executive-dashboard.mdx",
       "apps/docs/pages/features/dashboards.mdx",
@@ -384,7 +381,6 @@ const PROFILES: Record<string, DetailProfile> = {
     ],
     docs: [
       "apps/docs/pages/features/security-lake.mdx",
-      "apps/docs/pages/features/compliance-mapping.mdx",
       "apps/docs/pages/features/findings-stream.mdx",
     ],
   },
@@ -463,7 +459,7 @@ function chooseProfile(topic: MarketingTopic): DetailProfile {
     return PROFILES.infra;
   }
   if (
-    /report|compliance|audit|threat|letter grade|executive|finding|triage|dashboard|dossier|framework/.test(
+    /report|audit|threat|letter grade|executive|finding|triage|dashboard|dossier|framework/.test(
       text,
     )
   ) {
@@ -561,7 +557,7 @@ function resolveVisualKind(
   )
     return "infra";
   if (
-    /report|letter grade|dossier|compliance|threat model|export|audit|executive|dashboard/.test(
+    /report|letter grade|dossier|threat model|export|audit|executive|dashboard/.test(
       text,
     )
   )

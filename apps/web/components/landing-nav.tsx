@@ -85,12 +85,6 @@ const PLATFORM_COLS: MegaColumn[] = [
         href: "/platform/threat-models",
       },
       {
-        glyph: "C",
-        title: "Compliance Mapping",
-        desc: "OWASP, SOC 2, PCI, NIST, ISO, HIPAA.",
-        href: "/platform/audit-and-compliance",
-      },
-      {
         glyph: "R",
         title: "LLM Red Team",
         desc: "OWASP LLM Top 10 attack modules.",
@@ -328,12 +322,6 @@ const AI_SECURITY_COLS: MegaColumn[] = [
         title: "Sidecars and middleware",
         desc: "Proxy, LiteLLM, and MCP enforcement.",
         href: "/platform/ai-agents",
-      },
-      {
-        glyph: "",
-        title: "AI governance",
-        desc: "OWASP LLM, MITRE ATLAS, NIST AI RMF.",
-        href: "/platform/audit-and-compliance",
       },
       {
         glyph: "↻",

@@ -689,18 +689,6 @@ function TypeIcon({ id }: { id: string }) {
         <path d="M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2" />
       </svg>
     ),
-    "compliance-posture": (
-      <svg
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        aria-hidden
-      >
-        <rect x="3" y="1.5" width="10" height="13" rx="0.5" />
-        <path d="M5.5 6l1.5 1.5L10.5 5M5.5 10h5" />
-      </svg>
-    ),
   };
   return (icons[id] ?? null) as React.ReactNode;
 }

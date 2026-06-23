@@ -48,7 +48,7 @@ export const NAV_MENUS: NavMenu[] = [
       },
       {
         title: "Reports",
-        body: "Executive, technical, compliance, and retest deliverables.",
+        body: "Executive, technical, and retest deliverables.",
         href: "/platform/reports",
       },
     ],
@@ -132,11 +132,6 @@ export const NAV_MENUS: NavMenu[] = [
             href: "/integrations",
           },
           {
-            title: "Audit and compliance",
-            body: "Evidence packs mapped to OWASP, PCI DSS, SOC 2, ISO 27001, HIPAA, NIST, and GDPR.",
-            href: "/platform/audit-and-compliance",
-          },
-          {
             title: "Security Lake",
             body: "OCSF 1.3.0-normalized findings in an Apache Iceberg table — query, trend, export NDJSON/Parquet, or pull into your SIEM.",
             href: "/platform/security-lake",
@@ -198,7 +193,7 @@ export const NAV_MENUS: NavMenu[] = [
           },
           {
             title: "Technical dossier",
-            body: "Engineering evidence, reproduction steps, fix guidance, and compliance mappings.",
+            body: "Engineering evidence, reproduction steps, and fix guidance.",
             href: "/platform/technical-dossier",
           },
           {
@@ -328,7 +323,7 @@ export const NAV_MENUS: NavMenu[] = [
           },
           {
             title: "Letter grade",
-            body: "Executive-grade risk scoring across app, repo, AI, cloud, and compliance posture.",
+            body: "Executive-grade risk scoring across app, repo, AI, and cloud.",
             href: "/platform/letter-grade",
           },
           {

@@ -61,7 +61,6 @@ from .routers import (
     # Workspace-scoped aggregation endpoints powering /dashboard/executive
     # and the per-target trend dashboard at /targets/{id}.
     dashboard,
-    compliance,
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -287,7 +286,6 @@ if settings.observability_ingest_enabled:
     app.include_router(otlp_ingest.router)
     app.include_router(observability_router.router)
 app.include_router(dashboard.router)
-app.include_router(compliance.router)
 
 
 @app.get("/")

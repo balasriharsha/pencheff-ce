@@ -451,15 +451,6 @@ export const CATEGORIES: TargetCategory[] = [
         status: "coming-soon",
         categoryId: "identity-compliance",
       },
-      {
-        id: "compliance-posture",
-        num: 40,
-        label: "Compliance Posture",
-        description: "SOC 2, ISO 27001, PCI-DSS, HIPAA, GDPR, NIST",
-        kind: null,
-        status: "coming-soon",
-        categoryId: "identity-compliance",
-      },
     ],
   },
 ];

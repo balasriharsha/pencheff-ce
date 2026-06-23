@@ -84,7 +84,6 @@ const PLANS: Plan[] = [
       "When security is a shared responsibility. Unlimited workspaces, unlimited seats, dedicated support, and the full Pro feature set at general availability.",
     bullets: [
       "Unlimited workspaces, seats, and registered targets",
-      "Branded reporting & custom compliance mappings",
       "Single sign-on (SAML / OIDC)",
       "Dedicated Slack correspondence channel",
       "Priority vulnerability response & onboarding",
@@ -98,7 +97,7 @@ const PLANS: Plan[] = [
 const FAQ: { q: string; a: string }[] = [
   {
     q: "What's included in Free?",
-    a: "Free gives you 5 security scans and 3 AI auto-fixes every month, served by the Instant model — plus the full scanning surface (DAST, repo scanning, IaC, SBOM, threat models, compliance mapping, and reporting). No card required. Quotas reset on the 1st of each month.",
+    a: "Free gives you 5 security scans and 3 AI auto-fixes every month, served by the Instant model — plus the full scanning surface (DAST, repo scanning, IaC, SBOM, threat models, and reporting). No card required. Quotas reset on the 1st of each month.",
   },
   {
     q: "What ships in Pro?",
@@ -142,7 +141,12 @@ const COMPARE_ROWS: [string, string, string, string][] = [
   ["Repo scanning — Semgrep OSS + OSV advisories", "·", "·", "·"],
   ["IaC + container scanning (Trivy, Checkov)", "·", "·", "·"],
   ["Authenticated assessments (encrypted credentials)", "·", "·", "·"],
-  ["Compliance mapping (OWASP · PCI · SOC 2 · NIST · ISO · HIPAA)", "·", "·", "·"],
+  [
+    "Compliance mapping (OWASP · PCI · SOC 2 · NIST · ISO · HIPAA)",
+    "·",
+    "·",
+    "·",
+  ],
   ["Formal DOCX & PDF reports", "·", "·", "Branded"],
   ["Per-finding re-examination, suppression & workflow", "·", "·", "·"],
   ["Automated remediation — fix-PR for every finding", "—", "·", "·"],
@@ -172,7 +176,10 @@ type PricingPlansProps = {
   onSelect?: (planId: string) => void;
 };
 
-export function PricingPlans({ currentPlanId, onSelect }: PricingPlansProps = {}) {
+export function PricingPlans({
+  currentPlanId,
+  onSelect,
+}: PricingPlansProps = {}) {
   const billingMode = !!onSelect;
 
   return (
@@ -182,9 +189,7 @@ export function PricingPlans({ currentPlanId, onSelect }: PricingPlansProps = {}
         // In marketing mode Beta is highlighted; in billing mode the active
         // subscription takes that role instead.
         const highlight = billingMode ? isCurrent : p.highlighted;
-        const eyebrow = isCurrent
-          ? "Current subscription"
-          : p.eyebrow;
+        const eyebrow = isCurrent ? "Current subscription" : p.eyebrow;
 
         let cta: React.ReactNode;
         if (p.comingSoon) {
@@ -203,10 +208,7 @@ export function PricingPlans({ currentPlanId, onSelect }: PricingPlansProps = {}
           // marketing vs in-app billing mode. No Clerk checkout flow.
           cta = (
             <a href={TEAM_CONTACT_HREF} className="block">
-              <Button
-                variant={highlight ? "pink" : "lime"}
-                className="w-full"
-              >
+              <Button variant={highlight ? "pink" : "lime"} className="w-full">
                 {p.cta}
               </Button>
             </a>
@@ -225,10 +227,7 @@ export function PricingPlans({ currentPlanId, onSelect }: PricingPlansProps = {}
         } else {
           cta = (
             <Link href={p.id === "free" ? "/signup" : `/signup?plan=${p.id}`}>
-              <Button
-                variant={highlight ? "pink" : "lime"}
-                className="w-full"
-              >
+              <Button variant={highlight ? "pink" : "lime"} className="w-full">
                 {p.cta}
               </Button>
             </Link>
@@ -251,7 +250,9 @@ export function PricingPlans({ currentPlanId, onSelect }: PricingPlansProps = {}
               <span className="font-display text-[52px] text-ink leading-none">
                 {p.price}
               </span>
-              <span className="font-mono text-[12px] text-mist">{p.cadence}</span>
+              <span className="font-mono text-[12px] text-mist">
+                {p.cadence}
+              </span>
             </p>
             <p className="mt-5 text-[14px] italic text-slate">{p.tagline}</p>
             <hr className="rule mt-6" />
@@ -311,8 +312,8 @@ export function PricingDeliverables() {
             grade and severity counts.
           </li>
           <li className="flex gap-3">
-            <span className="text-gilt">·</span>Findings mapped to OWASP Top
-            10 (2021) categories.
+            <span className="text-gilt">·</span>Findings mapped to OWASP Top 10
+            (2021) categories.
           </li>
           <li className="flex gap-3">
             <span className="text-gilt">·</span>SOC 2 CC6 / CC7 control mapping.

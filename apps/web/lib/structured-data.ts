@@ -127,7 +127,7 @@ export function softwareApplicationJsonLd(): JsonLdObject {
       "LLM red teaming, AI security, AI runtime security, LLM guardrails, " +
       "AI agent firewall, prompt injection detection, AI gateway, " +
       "LLM observability, agent memory scanner, CNAPP, SCA, SBOM, IaC scanning, " +
-      "open source security platform, vulnerability scanning, compliance",
+      "open source security platform, vulnerability scanning",
     featureList: [
       "Dynamic Application Security Testing (DAST)",
       "Static Application Security Testing (SAST)",

@@ -1517,45 +1517,6 @@ async def list_scan_findings(
     return [_finding_to_out(f) for f in rows]
 
 
-@router.get(
-    "/scans/{scan_id}/compliance",
-    dependencies=[Depends(require_scope("repos:read"))],
-)
-async def get_repo_scan_compliance(
-    scan_id: str,
-    workspace: Workspace = Depends(get_active_workspace),
-    session: AsyncSession = Depends(get_session),
-) -> dict:
-    """Return the per-scan compliance rollup for a repository scan.
-
-    Mirrors ``GET /scans/{id}/compliance`` (URL / LLM scans) so the
-    same web UI component, JSON exporter, and report appendix can
-    consume any scan id without branching by target kind.
-
-    RepoFinding rows do not carry an explicit ``category`` — the
-    rollup service infers one from the scanner that produced the row
-    plus a few well-known tokens in ``rule_id`` (xss / sql / ssrf /
-    crypto / secret / …). Frameworks emitted: OWASP Top 10, PCI-DSS,
-    NIST 800-53, SOC 2, ISO 27001:2022, HIPAA.
-    """
-    from ..services.compliance import build_compliance_rollup
-
-    await _load_scan(session, scan_id, workspace.id)  # authz check
-
-    rows = (await session.execute(
-        select(RepoFinding).where(
-            RepoFinding.repo_scan_id == scan_id,
-            RepoFinding.suppressed.is_(False),
-        )
-    )).scalars().all()
-
-    return build_compliance_rollup(
-        scan_id=scan_id,
-        target_kind="repo",
-        findings=rows,
-    )
-
-
 @router.delete(
     "/scans/{scan_id}",
     status_code=status.HTTP_204_NO_CONTENT,

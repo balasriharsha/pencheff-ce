@@ -212,7 +212,6 @@ const PRIMARY_NAV = [
   },
   { href: "/findings", label: "Findings", icon: <FindingsIcon /> },
   { href: "/scans", label: "Assessments", icon: <AssessmentsIcon /> },
-  { href: "/compliance", label: "Compliance", icon: <ShieldIcon /> },
   { href: "/schedules", label: "Schedules", icon: <SchedulesIcon /> },
 ] as const;
 
@@ -227,7 +226,6 @@ const WORKBENCH_ITEMS: { href: string; label: string }[] = [
   { href: "/targets/new", label: "Register Target" },
   { href: "/findings", label: "Findings" },
   { href: "/scans", label: "Assessments" },
-  { href: "/compliance", label: "Compliance" },
   { href: "/schedules", label: "Schedules" },
 ];
 

@@ -630,63 +630,6 @@ async def get_scan_threat_model(
 
 
 @router.get(
-    "/{scan_id}/compliance",
-    dependencies=[Depends(require_scope("scans:read"))],
-)
-async def get_scan_compliance(
-    scan_id: str,
-    workspace: Workspace = Depends(get_active_workspace),
-    session: AsyncSession = Depends(get_session),
-) -> dict:
-    """Return the per-scan compliance rollup for a URL or LLM scan.
-
-    Mirrors ``GET /scans/{id}/threat-model`` in shape and semantics but
-    fans every Finding out across the framework set that matches the
-    target's kind:
-
-    * ``url`` targets → OWASP Top 10, PCI-DSS 4.0, NIST 800-53 Rev 5,
-      SOC 2, ISO 27001:2022, HIPAA.
-    * ``llm`` targets → OWASP LLM Top 10 (2025), MITRE ATLAS,
-      NIST AI Risk Management Framework, EU AI Act.
-
-    Repository scans use ``GET /repos/scans/{id}/compliance`` instead;
-    the rollup model is the same but reads from ``repo_findings``.
-
-    The response shape is documented in
-    ``services.compliance.build_compliance_rollup`` and is the contract
-    consumed by the web UI at ``/scans/[id]/compliance`` and by the
-    DOCX/Markdown report generator's compliance appendix.
-    """
-    from ..services.compliance import build_compliance_rollup
-
-    s = (await session.execute(
-        select(Scan).where(Scan.id == scan_id, Scan.workspace_id == workspace.id)
-    )).scalar_one_or_none()
-    if not s:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "scan not found")
-
-    # ``Target.kind`` is one of {"url", "repo", "llm"} but in practice
-    # only URL and LLM targets reach this endpoint — repo scans flow
-    # through ``GET /repos/scans/{id}/compliance`` instead. Default to
-    # "url" if a future kind appears or a row is missing.
-    target = await session.get(Target, s.target_id)
-    target_kind = target.kind if target and target.kind in ("url", "llm") else "url"
-
-    rows = (await session.execute(
-        select(DbFinding).where(
-            DbFinding.scan_id == scan_id,
-            DbFinding.suppressed.is_(False),
-        )
-    )).scalars().all()
-
-    return build_compliance_rollup(
-        scan_id=scan_id,
-        target_kind=target_kind,
-        findings=rows,
-    )
-
-
-@router.get(
     "/{scan_id}/llm-traces",
     dependencies=[Depends(require_scope("scans:read"))],
 )

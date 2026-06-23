@@ -201,12 +201,6 @@ export default function RepoScanPage() {
           >
             View dashboard →
           </Link>
-          <Link
-            href={`/repos/scans/${scanId}/compliance`}
-            className="inline-block border border-graphite px-4 py-2 font-mono text-[12px] uppercase tracking-[0.08em] hover:bg-graphite hover:text-white"
-          >
-            View compliance mapping →
-          </Link>
         </div>
       )}
 

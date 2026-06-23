@@ -185,7 +185,6 @@ const TIERS: Tier[] = [
       "When security is a shared responsibility. Unlimited workspaces, unlimited seats, dedicated support, and the full Pro feature set at general availability.",
     bullets: [
       "Unlimited workspaces, seats, and registered targets",
-      "Branded reporting & custom compliance mappings",
       "Single sign-on (SAML / OIDC)",
       "Dedicated Slack correspondence channel",
       "Priority vulnerability response & onboarding",
@@ -480,9 +479,9 @@ export function LandingCoverageSection() {
             Forty-nine first-party instruments cover the modern attack surface —
             injection, access control, authentication, cryptography,
             client-side, infrastructure, cloud, and API — and can be composed
-            with repo scanning, threat models, compliance rollups, SBOM output,
-            and LLM red team workflows. Auxiliary tools (nmap, sqlmap, nuclei,
-            ffuf, hydra, nikto) remain optional and operator-managed.
+            with repo scanning, threat models, SBOM output, and LLM red team
+            workflows. Auxiliary tools (nmap, sqlmap, nuclei, ffuf, hydra,
+            nikto) remain optional and operator-managed.
           </p>
         </div>
 
@@ -657,11 +656,10 @@ export function LandingPricingSection({
             style={{ ["--lp-d" as string]: "200ms" } as React.CSSProperties}
           >
             Pencheff is in <em>open beta</em>. Every feature is unlocked at the
-            Free tier today — DAST, SAST, IaC, container scanning, compliance
-            reporting, the lot. Pro adds automated remediation that
-            doesn&rsquo;t just find vulnerabilities, it fixes them with verified
-            pull requests. Team is for organisations that need unlimited scale
-            and dedicated support.
+            Free tier today — DAST, SAST, IaC, container scanning, the lot. Pro
+            adds automated remediation that doesn&rsquo;t just find
+            vulnerabilities, it fixes them with verified pull requests. Team is
+            for organisations that need unlimited scale and dedicated support.
           </p>
         </div>
 
