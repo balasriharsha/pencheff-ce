@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { pathSegment } from "@/lib/route-params";
@@ -410,16 +410,18 @@ function KindConfigView({
           />
           <Field
             label="Resources"
-            value={
-              ((cfg.resource_names as string[] | undefined) ||
-                (cfg.function_names as string[] | undefined))?.join(", ")
-            }
+            value={(
+              (cfg.resource_names as string[] | undefined) ||
+              (cfg.function_names as string[] | undefined)
+            )?.join(", ")}
             mono
             span={2}
           />
           <Field
             label="Inventory"
-            value={cfg.inventory ? "offline metadata attached" : "provider metadata"}
+            value={
+              cfg.inventory ? "offline metadata attached" : "provider metadata"
+            }
           />
           <Field
             label="Read-only"
@@ -598,7 +600,12 @@ function KindConfigView({
         <>
           <Field label="Source" value={cfg.source_type as string} mono />
           {cfg.url ? (
-            <Field label="Provider URL" value={cfg.url as string} mono span={2} />
+            <Field
+              label="Provider URL"
+              value={cfg.url as string}
+              mono
+              span={2}
+            />
           ) : null}
           {cfg.user_id ? (
             <Field label="User ID" value={cfg.user_id as string} mono />
@@ -628,7 +635,7 @@ function KindConfigView({
   );
 }
 
-export default function TargetDetailPage() {
+function TargetDetailPageInner() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -1339,5 +1346,13 @@ function RecommendedGuardrailsCard({
         </div>
       )}
     </section>
+  );
+}
+
+export default function TargetDetailPage() {
+  return (
+    <Suspense>
+      <TargetDetailPageInner />
+    </Suspense>
   );
 }

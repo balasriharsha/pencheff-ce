@@ -2,16 +2,39 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { PageLoading } from "@/components/loading";
 import { api } from "@/lib/api";
 
-type Target = { id: string; name: string; base_url: string; kind?: string | null };
+type Target = {
+  id: string;
+  name: string;
+  base_url: string;
+  kind?: string | null;
+};
 type Repo = { id: string; full_name: string; html_url: string };
-type Scan = { id: string; target_id: string; target_name: string; created_at: string; status: string };
-type Finding = { id: string; title: string; severity: string; source: string; resource_url: string | null };
+type Scan = {
+  id: string;
+  target_id: string;
+  target_name: string;
+  created_at: string;
+  status: string;
+};
+type Finding = {
+  id: string;
+  title: string;
+  severity: string;
+  source: string;
+  resource_url: string | null;
+};
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-6">
@@ -41,14 +64,15 @@ function Row({
 }) {
   return (
     <li className="px-4 py-3">
-      <Link
-        href={href}
-        className="block hover:bg-vellum/70 -mx-4 px-4 py-3"
-      >
+      <Link href={href} className="block hover:bg-vellum/70 -mx-4 px-4 py-3">
         <div className="flex items-start justify-between gap-6">
           <div className="min-w-0">
-            <div className="font-body text-[14px] text-ink truncate">{title}</div>
-            {meta && <div className="text-[12px] text-slate mt-1 truncate">{meta}</div>}
+            <div className="font-body text-[14px] text-ink truncate">
+              {title}
+            </div>
+            {meta && (
+              <div className="text-[12px] text-slate mt-1 truncate">{meta}</div>
+            )}
           </div>
           <span className="text-[12px] text-mist shrink-0">↗</span>
         </div>
@@ -57,7 +81,7 @@ function Row({
   );
 }
 
-export default function SearchPage() {
+function SearchPageInner() {
   const params = useSearchParams();
   const q = (params.get("q") ?? "").trim();
 
@@ -75,7 +99,9 @@ export default function SearchPage() {
       api<Target[]>("/targets").catch(() => [] as Target[]),
       api<Repo[]>("/repos").catch(() => [] as Repo[]),
       api<Scan[]>("/scans").catch(() => [] as Scan[]),
-      api<{ items: Finding[] }>("/unified-findings?limit=50").then((r) => r.items).catch(() => [] as Finding[]),
+      api<{ items: Finding[] }>("/unified-findings?limit=50")
+        .then((r) => r.items)
+        .catch(() => [] as Finding[]),
     ])
       .then(([t, r, s, f]) => {
         if (cancelled) return;
@@ -94,7 +120,11 @@ export default function SearchPage() {
   const targetMatches = useMemo(() => {
     if (!q) return [];
     return targets
-      .filter((t) => (t.name ?? "").toLowerCase().includes(needle) || (t.base_url ?? "").toLowerCase().includes(needle))
+      .filter(
+        (t) =>
+          (t.name ?? "").toLowerCase().includes(needle) ||
+          (t.base_url ?? "").toLowerCase().includes(needle),
+      )
       .slice(0, 10);
   }, [targets, needle, q]);
   const repoMatches = useMemo(() => {
@@ -106,7 +136,11 @@ export default function SearchPage() {
   const scanMatches = useMemo(() => {
     if (!q) return [];
     return scans
-      .filter((s) => (s.target_name ?? "").toLowerCase().includes(needle) || (s.id ?? "").toLowerCase().includes(needle))
+      .filter(
+        (s) =>
+          (s.target_name ?? "").toLowerCase().includes(needle) ||
+          (s.id ?? "").toLowerCase().includes(needle),
+      )
       .slice(0, 10);
   }, [scans, needle, q]);
   const findingMatches = useMemo(() => {
@@ -132,7 +166,13 @@ export default function SearchPage() {
     );
   }
 
-  if (loading && targets.length === 0 && repos.length === 0 && scans.length === 0 && findings.length === 0) {
+  if (
+    loading &&
+    targets.length === 0 &&
+    repos.length === 0 &&
+    scans.length === 0 &&
+    findings.length === 0
+  ) {
     return <PageLoading title={`Search: ${q}`} cards={6} />;
   }
 
@@ -146,18 +186,29 @@ export default function SearchPage() {
           </h1>
         </div>
         <div className="font-mono text-[12px] text-mist">
-          {targetMatches.length + repoMatches.length + scanMatches.length + findingMatches.length} results shown
+          {targetMatches.length +
+            repoMatches.length +
+            scanMatches.length +
+            findingMatches.length}{" "}
+          results shown
         </div>
       </header>
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Section title="Targets">
           {targetMatches.length === 0 ? (
-            <p className="text-[13px] text-slate italic">No matching targets.</p>
+            <p className="text-[13px] text-slate italic">
+              No matching targets.
+            </p>
           ) : (
             <List>
               {targetMatches.map((t) => (
-                <Row key={t.id} title={t.name} meta={t.base_url} href={`/targets/${t.id}`} />
+                <Row
+                  key={t.id}
+                  title={t.name}
+                  meta={t.base_url}
+                  href={`/targets/${t.id}`}
+                />
               ))}
             </List>
           )}
@@ -165,11 +216,18 @@ export default function SearchPage() {
 
         <Section title="Repositories">
           {repoMatches.length === 0 ? (
-            <p className="text-[13px] text-slate italic">No matching repositories.</p>
+            <p className="text-[13px] text-slate italic">
+              No matching repositories.
+            </p>
           ) : (
             <List>
               {repoMatches.map((r) => (
-                <Row key={r.id} title={r.full_name} meta={r.html_url} href={`/repos/${r.id}`} />
+                <Row
+                  key={r.id}
+                  title={r.full_name}
+                  meta={r.html_url}
+                  href={`/repos/${r.id}`}
+                />
               ))}
             </List>
           )}
@@ -177,7 +235,9 @@ export default function SearchPage() {
 
         <Section title="Assessments">
           {scanMatches.length === 0 ? (
-            <p className="text-[13px] text-slate italic">No matching assessments.</p>
+            <p className="text-[13px] text-slate italic">
+              No matching assessments.
+            </p>
           ) : (
             <List>
               {scanMatches.map((s) => (
@@ -194,7 +254,9 @@ export default function SearchPage() {
 
         <Section title="Findings">
           {findingMatches.length === 0 ? (
-            <p className="text-[13px] text-slate italic">No matching findings.</p>
+            <p className="text-[13px] text-slate italic">
+              No matching findings.
+            </p>
           ) : (
             <List>
               {findingMatches.map((f) => (
@@ -213,3 +275,10 @@ export default function SearchPage() {
   );
 }
 
+export default function SearchPage() {
+  return (
+    <Suspense>
+      <SearchPageInner />
+    </Suspense>
+  );
+}

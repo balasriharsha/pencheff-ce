@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { pathSegment } from "@/lib/route-params";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Button, Input } from "@/components/brutal";
 import { InlineLoading } from "@/components/loading";
 import { Paginator } from "@/components/paginator";
@@ -126,7 +126,7 @@ function extractSbomRows(sbom: RepoSbom | null): SbomRow[] {
   return [];
 }
 
-export default function RepoDetailPage() {
+function RepoDetailPageInner() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -612,4 +612,12 @@ function fmtDate(iso: string): string {
   } catch {
     return iso;
   }
+}
+
+export default function RepoDetailPage() {
+  return (
+    <Suspense>
+      <RepoDetailPageInner />
+    </Suspense>
+  );
 }
