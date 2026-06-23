@@ -16,6 +16,11 @@ async def get_current_user(
 ) -> User:
     request.state.auth_kind = "session"
     ids = await seed_ids(session)
+    # Populate request.state so the audit middleware attributes every CE
+    # action to the seeded owner/org (see middleware/audit.py:_extract_actor).
+    request.state.user_id = ids["user_id"]
+    request.state.org_id = ids["org_id"]
+    request.state.api_key_id = None
     return await session.get(User, ids["user_id"])
 
 
@@ -25,6 +30,7 @@ async def get_active_workspace(
     session: AsyncSession = Depends(get_session),
 ) -> Workspace:
     ids = await seed_ids(session)
+    request.state.workspace_id = ids["workspace_id"]
     return await session.get(Workspace, ids["workspace_id"])
 
 

@@ -57,3 +57,29 @@ def test_session_only_never_rejects():
     user = User(id="user-1", email=st.DEFAULT_USER_EMAIL)
     out = asyncio.run(deps.session_only(_request_without_auth(), user))
     assert out is user
+
+
+def test_require_role_allows_any():
+    user = User(id="user-1", email=st.DEFAULT_USER_EMAIL)
+    ws = Workspace(id="ws-1", org_id="org-1", name="Default", slug="default")
+    dep = deps.require_role("owner")
+    out_user, out_ws = asyncio.run(dep(user, ws))
+    assert out_user is user and out_ws is ws
+
+
+def test_require_org_role_allows_any():
+    user = User(id="user-1", email=st.DEFAULT_USER_EMAIL)
+    dep = deps.require_org_role("owner")
+    out_user, member = asyncio.run(dep("org-1", user))
+    assert out_user is user and member.role == "owner"
+
+
+def test_get_current_user_populates_request_state_for_audit():
+    user = User(id="user-1", email=st.DEFAULT_USER_EMAIL)
+    session = FakeSession({(User, "user-1"): user})
+    request = _request_without_auth()
+    asyncio.run(deps.get_current_user(request, session))
+    assert request.state.user_id == "user-1"
+    assert request.state.org_id == "org-1"
+    assert request.state.api_key_id is None
+    assert request.state.auth_kind == "session"
