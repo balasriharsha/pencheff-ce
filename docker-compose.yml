@@ -230,9 +230,16 @@ services:
     # ``$$`` escapes compose substitution so the shell reads WORKER_ALWAYS_ON at runtime.
     command: sh -c 'celery -A pencheff_api.tasks.celery_app.celery_app worker --loglevel=info --concurrency=${WORKER_CONCURRENCY:-2} $$([ "$${WORKER_ALWAYS_ON:-true}" = "true" ] && echo -B)'
 
-  # web/ is now a Cloudflare Pages static export (apps/web → `next build` → out/).
-  # See DEPLOYMENT.md. Local dev: `cd apps/web && npm run dev`.
-
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
 
 volumes:
   pg_data:
