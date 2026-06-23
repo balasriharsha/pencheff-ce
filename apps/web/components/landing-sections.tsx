@@ -932,24 +932,7 @@ export function LandingColophon() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/process">Engagement process</Link>
-                </li>
-                <li>
                   <Link href="/deliverables">Reporting</Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h5>Periodical</h5>
-              <ul>
-                <li>
-                  <Link href="/enquiries">Enquiries</Link>
-                </li>
-                <li>
-                  <Link href="/resources/overview">Documentation</Link>
-                </li>
-                <li>
-                  <Link href="/resources/repo-scan">Repository (MIT)</Link>
                 </li>
               </ul>
             </div>
@@ -964,17 +947,6 @@ export function LandingColophon() {
                 </li>
                 <li>
                   <Link href="/dashboard">Dashboard</Link>
-                </li>
-                <li>
-                  <Link href="/audience/security-disclosures">
-                    Security disclosures
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/privacy">Privacy policy</Link>
-                </li>
-                <li>
-                  <Link href="/terms">Terms & conditions</Link>
                 </li>
               </ul>
             </div>

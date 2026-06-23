@@ -84,7 +84,7 @@ export const NAV_MENUS: NavMenu[] = [
           {
             title: "SCA and SBOM",
             body: "OSV, NVD, GHSA, RustSec, GoVulnDB, SPDX, CycloneDX, EPSS, KEV, and SSVC.",
-            href: "/resources/repo-scan",
+            href: "/platform/sast-and-secrets",
           },
           {
             title: "IaC and containers",
@@ -129,7 +129,7 @@ export const NAV_MENUS: NavMenu[] = [
           {
             title: "MCP toolkit",
             body: "Tool-calling security automation exposed through the Pencheff MCP server.",
-            href: "/resources/api-reference",
+            href: "/integrations",
           },
           {
             title: "Audit and compliance",
@@ -234,17 +234,17 @@ export const NAV_MENUS: NavMenu[] = [
       {
         title: "URL scan",
         body: "DAST for live applications and APIs.",
-        href: "/resources/url-scan",
+        href: "/platform/web-dast",
       },
       {
         title: "Repo scan",
         body: "SAST, secrets, dependency, and IaC coverage.",
-        href: "/resources/repo-scan",
+        href: "/platform/sast-and-secrets",
       },
       {
         title: "SBOM",
         body: "SPDX and CycloneDX output with vulnerability context.",
-        href: "/resources/repo-scan",
+        href: "/platform/sast-and-secrets",
       },
       {
         title: "Compare scans",
@@ -299,7 +299,7 @@ export const NAV_MENUS: NavMenu[] = [
           {
             title: "Dependency intelligence",
             body: "Fixed versions, exploitability, reachability, EPSS, KEV, SSVC, licenses, and advisory enrichment.",
-            href: "/resources/repo-scan",
+            href: "/platform/sast-and-secrets",
           },
           {
             title: "Auto-fix PRs",
@@ -445,351 +445,6 @@ export const NAV_MENUS: NavMenu[] = [
             title: "Regression tests",
             body: "Keep known jailbreaks, unsafe outputs, and policy bypasses from returning after releases.",
             href: "/platform/llm-red-team",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Solutions",
-    eyebrow: "For teams and workflows",
-    title: "Security programs without fragmented tooling",
-    body: "Use the same platform for sprint gates, release assurance, audit prep, AI product validation, executive risk, and continuous attack-surface monitoring.",
-    cta: {
-      title: "Talk to Pencheff",
-      body: "Discuss a workflow, deployment model, or assessment plan.",
-      href: "/enquiries",
-    },
-    quickLinks: [
-      {
-        title: "Security teams",
-        body: "Verified risk, exploitability, and remediation queues.",
-        href: "/audience/security-disclosures",
-      },
-      {
-        title: "Engineers",
-        body: "Developer-ready evidence, PRs, SARIF, and CI feedback.",
-        href: "/audience/for-engineers",
-      },
-      {
-        title: "Auditors",
-        body: "Compliance appendices, evidence packs, and retest history.",
-        href: "/audience/for-auditors",
-      },
-      {
-        title: "Executives",
-        body: "Letter grade, business risk, portfolio posture, and trends.",
-        href: "/audience/for-executives",
-      },
-    ],
-    groups: [
-      {
-        title: "Program Workflows",
-        items: [
-          {
-            title: "CI/CD gates",
-            body: "Repo, dependency, IaC, container, GitHub checks, SARIF, and policy blocking.",
-            href: "#delivery",
-          },
-          {
-            title: "Authenticated app pentest",
-            body: "Session macros, role-aware coverage, browser crawling, business logic, and evidence.",
-            href: "/platform/authenticated-coverage",
-          },
-          {
-            title: "AI product release",
-            body: "LLM red team, agentic tool tests, guardrails, policy reports, and regression suites.",
-            href: "#ai",
-          },
-          {
-            title: "Continuous ASM",
-            body: "Asset discovery, exposed services, retest cadence, and drift monitoring.",
-            href: "/asm",
-          },
-        ],
-      },
-      {
-        title: "Deployment Models",
-        items: [
-          {
-            title: "SaaS app",
-            body: "Dashboards, reports, integrations, schedules, and multi-workspace operations.",
-            href: "/signup",
-          },
-          {
-            title: "CLI and CI",
-            body: "Run deterministic checks in pipelines and pass artifacts into the platform.",
-            href: "/resources/api-reference",
-          },
-          {
-            title: "MCP server",
-            body: "Expose scanning and security automation tools to compatible AI agents.",
-            href: "/resources/api-reference",
-          },
-          {
-            title: "Self-hosting",
-            body: "Operate the SaaS API, web app, observability, database, and workers in your environment.",
-            href: "/resources/overview",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Resources",
-    eyebrow: "Docs, references, and playbooks",
-    title: "Everything needed to operate Pencheff",
-    body: "Jump into setup guides, feature references, reporting conventions, API documentation, methodology pages, and workflow-specific playbooks.",
-    cta: {
-      title: "Open documentation",
-      body: "Read the user guide and implementation references.",
-      href: "/resources/overview",
-    },
-    quickLinks: [
-      {
-        title: "Methodology",
-        body: "The adversarial assessment cycle and evidence rules.",
-        href: "/platform/methodology-v4-2",
-      },
-      {
-        title: "API reference",
-        body: "Authentication, targets, scans, findings, assets, and MCP tools.",
-        href: "/resources/api-reference",
-      },
-      {
-        title: "Issued reports",
-        body: "Executive and technical dossier structure.",
-        href: "/resources/issued-reports",
-      },
-      {
-        title: "Findings register",
-        body: "Finding lifecycle, severity, verification, and comments.",
-        href: "/resources/findings-register",
-      },
-    ],
-    groups: [
-      {
-        title: "Quickstarts",
-        items: [
-          {
-            title: "URL scan",
-            body: "Create a target, choose profile, run DAST, review evidence, and export reports.",
-            href: "/resources/url-scan",
-          },
-          {
-            title: "Repo scan",
-            body: "Connect code, run SAST/SCA/IaC, review findings, and produce PR-ready fixes.",
-            href: "/resources/repo-scan",
-          },
-          {
-            title: "LLM red team",
-            body: "Configure a model endpoint, run attack categories, inspect traces, and tune guardrails.",
-            href: "/platform/llm-red-team",
-          },
-          {
-            title: "Threat model",
-            body: "Generate STRIDE and DREAD analysis attached to the scan record.",
-            href: "/resources/threat-model",
-          },
-        ],
-      },
-      {
-        title: "Reference Areas",
-        items: [
-          {
-            title: "Scans and schedules",
-            body: "Status, profiles, assets, recurrence, compare view, and retest behavior.",
-            href: "/scans",
-          },
-          {
-            title: "Integrations",
-            body: "Slack, Teams, Google Chat, Discord, PagerDuty, Opsgenie, Splunk, Jira, GitHub, and webhooks.",
-            href: "/integrations",
-          },
-          {
-            title: "Observability",
-            body: "Traces, audit logs, metrics, cost, SLOs, retention, and partition pruning.",
-            href: "/observability",
-          },
-          {
-            title: "Change log",
-            body: "New capabilities, documentation updates, and platform releases.",
-            href: "/resources/overview",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Support",
-    eyebrow: "Help and contact",
-    title: "Get the right help for security work",
-    body: "Reach the team for onboarding, enterprise deployments, security disclosures, partnerships, support, and compliance conversations.",
-    cta: {
-      title: "Contact support",
-      body: "Send an enquiry to the Pencheff team.",
-      href: "/enquiries",
-    },
-    quickLinks: [
-      {
-        title: "Security disclosure",
-        body: "Responsible disclosure and vulnerability reporting.",
-        href: "/audience/security-disclosures",
-      },
-      {
-        title: "Trust and compliance",
-        body: "Program controls, evidence posture, and compliance focus.",
-        href: "/compliance",
-      },
-      {
-        title: "Partners",
-        body: "Pentest triage, channel work, and managed security workflows.",
-        href: "/company/our-partners",
-      },
-      {
-        title: "API keys",
-        body: "Manage credentials and automation access.",
-        href: "/settings/api-keys",
-      },
-    ],
-    groups: [
-      {
-        title: "Operational Help",
-        items: [
-          {
-            title: "Self-hosting",
-            body: "Deployment notes for web, API, workers, database, and observability.",
-            href: "/resources/overview",
-          },
-          {
-            title: "Integrations support",
-            body: "Configure notifications, ticketing, webhooks, SIEM, and source-control workflows.",
-            href: "/integrations",
-          },
-          {
-            title: "Onboarding",
-            body: "Set up workspace, targets, roles, schedules, and first reports.",
-            href: "/onboarding",
-          },
-        ],
-      },
-      {
-        title: "Company",
-        items: [
-          {
-            title: "Our discipline",
-            body: "How Pencheff thinks about methodology, evidence, and engineering.",
-            href: "/company/our-discipline",
-          },
-          {
-            title: "Auditors",
-            body: "Guidance for readers validating scope, evidence, and compliance output.",
-            href: "/company/our-auditors",
-          },
-          {
-            title: "Case studies",
-            body: "Examples of how programs use Pencheff across security workflows.",
-            href: "/company/case-studies",
-          },
-          {
-            title: "Brand and press",
-            body: "Company identity, press references, and approved language.",
-            href: "/company/newsroom",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Company",
-    eyebrow: "About Pencheff",
-    title: "The practice behind the platform",
-    body: "Pencheff is built around the principle that evidence-backed, adversarial testing should be as rigorous as a formal audit — readable by engineers, executives, and compliance teams on the same page.",
-    cta: {
-      title: "Contact us",
-      body: "Send an enquiry to the Pencheff team.",
-      href: "/enquiries",
-    },
-    quickLinks: [
-      {
-        title: "Our discipline",
-        body: "How Pencheff thinks about methodology, evidence, and engineering.",
-        href: "/company/our-discipline",
-      },
-      {
-        title: "Trust and compliance",
-        body: "Program controls, evidence posture, and compliance focus.",
-        href: "/compliance",
-      },
-      {
-        title: "Contact",
-        body: "Direct correspondence with the Pencheff team.",
-        href: "/company/contact",
-      },
-      {
-        title: "Careers",
-        body: "Open positions and the standing committee.",
-        href: "/company/careers",
-      },
-    ],
-    groups: [
-      {
-        title: "Our Practice",
-        items: [
-          {
-            title: "Our discipline",
-            body: "How Pencheff thinks about methodology, evidence, and engineering.",
-            href: "/company/our-discipline",
-          },
-          {
-            title: "Our auditors",
-            body: "Guidance for readers validating scope, evidence, and compliance output.",
-            href: "/company/our-auditors",
-          },
-          {
-            title: "Our partners",
-            body: "Implementation specialists, channel partners, and managed security workflows.",
-            href: "/company/our-partners",
-          },
-          {
-            title: "Case studies",
-            body: "Examples of how programs use Pencheff across security workflows.",
-            href: "/company/case-studies",
-          },
-          {
-            title: "Trust and compliance",
-            body: "SOC 2, ISO 27001, and GDPR posture with program controls evidence.",
-            href: "/compliance",
-          },
-        ],
-      },
-      {
-        title: "Correspondence",
-        items: [
-          {
-            title: "Newsroom",
-            body: "Press coverage, bulletins, and platform announcements.",
-            href: "/company/newsroom",
-          },
-          {
-            title: "Contact",
-            body: "Direct correspondence with the Pencheff team.",
-            href: "/company/contact",
-          },
-          {
-            title: "Careers",
-            body: "Open positions and the standing committee.",
-            href: "/company/careers",
-          },
-          {
-            title: "Leadership",
-            body: "The editorial board and founding team.",
-            href: "/company/leadership",
-          },
-          {
-            title: "Brand and press",
-            body: "Logos, likeness, approved language, and press kit.",
-            href: "/company/newsroom",
           },
         ],
       },

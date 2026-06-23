@@ -158,20 +158,6 @@ function IntegrationsIcon() {
     </svg>
   );
 }
-function KeyIcon() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden
-    >
-      <circle cx="5.5" cy="7.5" r="3.5" />
-      <path d="M8.5 9.5l6 6M12 12l-1.5-1.5" />
-    </svg>
-  );
-}
 function SettingsIcon() {
   return (
     <svg
@@ -232,7 +218,6 @@ const PRIMARY_NAV = [
 
 const SETTINGS_NAV = [
   { href: "/integrations", label: "Integrations", icon: <IntegrationsIcon /> },
-  { href: "/settings/api-keys", label: "API Keys", icon: <KeyIcon /> },
   { href: "/settings", label: "Settings", icon: <SettingsIcon /> },
 ] as const;
 
@@ -855,13 +840,6 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           >
             Settings
           </NavLink>
-          <NavLink
-            href="/settings/api-keys"
-            onClick={onClose}
-            className="!text-graphite !text-[15px] py-3 hover:!no-underline"
-          >
-            API Keys
-          </NavLink>
           <a
             href={DOCS_URL}
             target="_blank"
@@ -901,9 +879,6 @@ export function AppNav() {
             Dashboard
           </NavLink>
           <WorkbenchMenu />
-          <NavLink href="/settings/api-keys" className="whitespace-nowrap">
-            API Keys
-          </NavLink>
           <DocsLink className="whitespace-nowrap" />
           <ThemeToggle variant="nav" />
         </div>

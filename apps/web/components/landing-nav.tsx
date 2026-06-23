@@ -12,13 +12,7 @@ export function LandingMasthead() {
   return null;
 }
 
-type MegaKey =
-  | "platform"
-  | "capabilities"
-  | "ai-security"
-  | "solutions"
-  | "resources"
-  | "company";
+type MegaKey = "platform" | "capabilities" | "ai-security";
 
 type MegaLink = {
   glyph: string;
@@ -97,12 +91,6 @@ const PLATFORM_COLS: MegaColumn[] = [
         href: "/platform/audit-and-compliance",
       },
       {
-        glyph: "B",
-        title: "SBOM",
-        desc: "SPDX and CycloneDX supply-chain evidence.",
-        href: "/resources/repo-scan",
-      },
-      {
         glyph: "R",
         title: "LLM Red Team",
         desc: "OWASP LLM Top 10 attack modules.",
@@ -171,150 +159,6 @@ const PLATFORM_COLS: MegaColumn[] = [
   },
 ];
 
-const RESOURCES_COLS: MegaColumn[] = [
-  {
-    heading: "Reading Room",
-    links: [
-      {
-        glyph: "M",
-        title: "Methodology Brief",
-        desc: "v4.2 monograph and rationale.",
-        href: "/platform/methodology-v4-2",
-      },
-      {
-        glyph: "¶",
-        title: "Issued Reports",
-        desc: "A library of past assessments.",
-        href: "/resources/issued-reports",
-      },
-      {
-        glyph: "F",
-        title: "Findings Register",
-        desc: "Sample evidence catalogue.",
-        href: "/resources/findings-register",
-      },
-      {
-        glyph: "∮",
-        title: "Repository",
-        desc: "MIT-licensed source, self-hostable.",
-        href: "/resources/repo-scan",
-      },
-      {
-        glyph: "G",
-        title: "Glossary",
-        desc: "Terms, classifications, conventions.",
-        href: "/resources/overview",
-      },
-    ],
-  },
-  {
-    heading: "Reference & Docs",
-    links: [
-      {
-        glyph: "W",
-        title: "URL scan (DAST)",
-        desc: "Recon, crawl, probe, and verify.",
-        href: "/resources/url-scan",
-      },
-      {
-        glyph: "S",
-        title: "Repo scan",
-        desc: "SAST, SCA, IaC, and secrets.",
-        href: "/resources/repo-scan",
-      },
-      {
-        glyph: "B",
-        title: "SBOM",
-        desc: "SPDX 2.3 and CycloneDX 1.5 output.",
-        href: "/resources/repo-scan",
-      },
-      {
-        glyph: "T",
-        title: "Threat model",
-        desc: "Deterministic STRIDE and DREAD.",
-        href: "/resources/threat-model",
-      },
-      {
-        glyph: "Σ",
-        title: "Swarm mode",
-        desc: "Recon, breaker, and synthesis agents.",
-        href: "/platform/agent-swarms",
-      },
-      {
-        glyph: "R",
-        title: "LLM red team",
-        desc: "OWASP LLM Top 10 payload libraries.",
-        href: "/platform/llm-red-team",
-      },
-      {
-        glyph: "D",
-        title: "User documentation",
-        desc: "Configure and operate the platform.",
-        href: "/resources/overview",
-      },
-      {
-        glyph: "⌘",
-        title: "Self-hosting",
-        desc: "Docker Compose installation guide.",
-        href: "/resources/overview",
-      },
-      {
-        glyph: "/",
-        title: "API reference",
-        desc: "REST endpoints and webhooks.",
-        href: "/resources/api-reference",
-      },
-      {
-        glyph: "Δ",
-        title: "Changelog",
-        desc: "Methodology and platform revisions.",
-        href: "/resources/overview",
-      },
-      {
-        glyph: "○",
-        title: "Status",
-        desc: "Engine availability and incidents.",
-        href: "/resources/overview",
-      },
-    ],
-  },
-  {
-    heading: "Audience",
-    links: [
-      {
-        glyph: "?",
-        title: "Enquiries",
-        desc: "Frequently considered questions.",
-        href: "/enquiries",
-      },
-      {
-        glyph: "!",
-        title: "Security Disclosures",
-        desc: "Responsible disclosure programme.",
-        href: "/audience/security-disclosures",
-      },
-      {
-        glyph: "E",
-        title: "Pencheff for Engineers",
-        desc: "Triage, evidence, fix verification.",
-        href: "/audience/for-engineers",
-      },
-      {
-        glyph: "Λ",
-        title: "Pencheff for Auditors",
-        desc: "Framework-mapped evidence packs.",
-        href: "/audience/for-auditors",
-      },
-      {
-        glyph: "X",
-        title: "Pencheff for Executives",
-        desc: "Letter grade and risk attestation.",
-        href: "/audience/for-executives",
-      },
-    ],
-  },
-];
-
 const CAPABILITIES_COLS: MegaColumn[] = [
   {
     heading: "Dynamic Testing",
@@ -365,12 +209,6 @@ const CAPABILITIES_COLS: MegaColumn[] = [
         title: "Secrets and malware",
         desc: "gitleaks, YARA, backdoor detection.",
         href: "/capabilities/secrets-and-malware",
-      },
-      {
-        glyph: "D",
-        title: "Dependency intelligence",
-        desc: "OSV, KEV, EPSS, SSVC enrichment.",
-        href: "/resources/repo-scan",
       },
       {
         glyph: "↻",
@@ -502,169 +340,6 @@ const AI_SECURITY_COLS: MegaColumn[] = [
         title: "Regression tests",
         desc: "Block known jailbreaks after release.",
         href: "/platform/llm-red-team",
-      },
-    ],
-  },
-];
-
-const SOLUTIONS_COLS: MegaColumn[] = [
-  {
-    heading: "Program Workflows",
-    links: [
-      {
-        glyph: "⌚",
-        title: "CI/CD gates",
-        desc: "Repo, IaC, container policy blocking.",
-        href: "/solutions/overview",
-      },
-      {
-        glyph: "A",
-        title: "Authenticated app pentest",
-        desc: "Session-aware browser crawling.",
-        href: "/platform/authenticated-coverage",
-      },
-      {
-        glyph: "Σ",
-        title: "AI product release",
-        desc: "LLM red team and guardrails.",
-        href: "/solutions/overview",
-      },
-      {
-        glyph: "○",
-        title: "Continuous ASM",
-        desc: "Asset discovery and drift monitoring.",
-        href: "/asm",
-      },
-    ],
-  },
-  {
-    heading: "Deployment Models",
-    links: [
-      {
-        glyph: "S",
-        title: "SaaS app",
-        desc: "Dashboards, reports, multi-workspace.",
-        href: "/signup",
-      },
-      {
-        glyph: "/",
-        title: "CLI and CI",
-        desc: "Deterministic checks in pipelines.",
-        href: "/resources/api-reference",
-      },
-      {
-        glyph: "⌘",
-        title: "MCP server",
-        desc: "Security automation for AI agents.",
-        href: "/resources/api-reference",
-      },
-      {
-        glyph: "H",
-        title: "Self-hosting",
-        desc: "Run the stack inside your boundary.",
-        href: "/resources/overview",
-      },
-    ],
-  },
-  {
-    heading: "By Audience",
-    links: [
-      {
-        glyph: "S",
-        title: "Security teams",
-        desc: "Verified risk and remediation queues.",
-        href: "/solutions/overview",
-      },
-      {
-        glyph: "E",
-        title: "Engineers",
-        desc: "Developer-ready evidence and PRs.",
-        href: "/solutions/overview",
-      },
-      {
-        glyph: "Λ",
-        title: "Auditors",
-        desc: "Compliance appendices and retests.",
-        href: "/company/our-auditors",
-      },
-      {
-        glyph: "X",
-        title: "Executives",
-        desc: "Letter grade and portfolio posture.",
-        href: "/solutions/overview",
-      },
-    ],
-  },
-];
-
-const COMPANY_COLS: MegaColumn[] = [
-  {
-    heading: "Our Practice",
-    links: [
-      {
-        glyph: "",
-        title: "Our Discipline",
-        desc: "How we work · what we believe",
-        href: "/company/our-discipline",
-      },
-      {
-        glyph: "A",
-        title: "Our Auditors",
-        desc: "Customers using the report",
-        href: "/company/our-auditors",
-      },
-      {
-        glyph: "P",
-        title: "Our Partners",
-        desc: "Implementation specialists",
-        href: "/company/our-partners",
-      },
-      {
-        glyph: "¶",
-        title: "Case Studies",
-        desc: "Engagements at scale",
-        href: "/company/case-studies",
-      },
-      {
-        glyph: "∰",
-        title: "Trust & Compliance",
-        desc: "SOC 2 · ISO 27001 · GDPR posture",
-        href: "/compliance",
-      },
-    ],
-  },
-  {
-    heading: "Correspondence",
-    links: [
-      {
-        glyph: "№",
-        title: "Newsroom",
-        desc: "Press coverage & bulletins",
-        href: "/company/newsroom",
-      },
-      {
-        glyph: "✉",
-        title: "Contact",
-        desc: "Direct correspondence",
-        href: "/company/contact",
-      },
-      {
-        glyph: "C",
-        title: "Careers",
-        desc: "Open positions · the standing committee",
-        href: "/company/careers",
-      },
-      {
-        glyph: "L",
-        title: "Leadership",
-        desc: "The editorial board",
-        href: "/company/leadership",
-      },
-      {
-        glyph: "⊕",
-        title: "Brand & Press",
-        desc: "Logos · likeness · usage",
-        href: "/company/newsroom",
       },
     ],
   },
@@ -1015,91 +690,6 @@ export function LandingNav() {
             )}
           </div>
 
-          <div className="lp-mobile-section">
-            <button
-              type="button"
-              className="lp-mobile-sec-btn"
-              aria-expanded={mobileSection === "solutions"}
-              onClick={() =>
-                setMobileSection((v) =>
-                  v === "solutions" ? "root" : "solutions",
-                )
-              }
-            >
-              Solutions <span aria-hidden>▾</span>
-            </button>
-            {mobileSection === "solutions" && (
-              <div className="lp-mobile-links">
-                {SOLUTIONS_COLS.flatMap((c) => c.links).map((l) => (
-                  <Link
-                    key={`m-sol-${l.title}`}
-                    href={l.href}
-                    className="lp-mobile-link"
-                    onClick={close}
-                  >
-                    {l.title}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="lp-mobile-section">
-            <button
-              type="button"
-              className="lp-mobile-sec-btn"
-              aria-expanded={mobileSection === "resources"}
-              onClick={() =>
-                setMobileSection((v) =>
-                  v === "resources" ? "root" : "resources",
-                )
-              }
-            >
-              Resources <span aria-hidden>▾</span>
-            </button>
-            {mobileSection === "resources" && (
-              <div className="lp-mobile-links">
-                {RESOURCES_COLS.flatMap((c) => c.links).map((l) => (
-                  <Link
-                    key={`m-res-${l.title}`}
-                    href={l.href}
-                    className="lp-mobile-link"
-                    onClick={close}
-                  >
-                    {l.title}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="lp-mobile-section">
-            <button
-              type="button"
-              className="lp-mobile-sec-btn"
-              aria-expanded={mobileSection === "company"}
-              onClick={() =>
-                setMobileSection((v) => (v === "company" ? "root" : "company"))
-              }
-            >
-              Company <span aria-hidden>▾</span>
-            </button>
-            {mobileSection === "company" && (
-              <div className="lp-mobile-links">
-                {COMPANY_COLS.flatMap((c) => c.links).map((l) => (
-                  <Link
-                    key={`m-co-${l.title}`}
-                    href={l.href}
-                    className="lp-mobile-link"
-                    onClick={close}
-                  >
-                    {l.title}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
           <div className="lp-mobile-links lp-mobile-links-tight">
             <a
               href={
@@ -1138,9 +728,6 @@ export function LandingNav() {
             {trigger("platform", "Platform")}
             {trigger("capabilities", "Capabilities")}
             {trigger("ai-security", "AI Security")}
-            {trigger("solutions", "Solutions")}
-            {trigger("resources", "Resources")}
-            {trigger("company", "Company")}
             <a
               className="lp-nav-link"
               href={
@@ -1205,42 +792,6 @@ export function LandingNav() {
             id="mega-ai-security"
             cols={AI_SECURITY_COLS}
             isOpen={openKey === "ai-security"}
-            onMouseEnter={cancelClose}
-            onMouseLeave={scheduleClose}
-            onLinkClick={close}
-          />
-          <MegaPanel
-            id="mega-solutions"
-            cols={SOLUTIONS_COLS}
-            isOpen={openKey === "solutions"}
-            onMouseEnter={cancelClose}
-            onMouseLeave={scheduleClose}
-            onLinkClick={close}
-          />
-          <MegaPanel
-            id="mega-resources"
-            cols={RESOURCES_COLS}
-            isOpen={openKey === "resources"}
-            onMouseEnter={cancelClose}
-            onMouseLeave={scheduleClose}
-            onLinkClick={close}
-          />
-          <MegaPanel
-            id="mega-company"
-            cols={COMPANY_COLS}
-            feature={{
-              eyebrow: "Bulletin · 2026 — Vol. II",
-              title: (
-                <>
-                  Pencheff Adopts{" "}
-                  <span className="lp-italic-gilt">Methodology v4.2.</span>
-                </>
-              ),
-              body: "Refined exploit-chain composition, automated false-positive triage, and an updated grade attestation pipeline. Read the rationale.",
-              cta: "Read the bulletin →",
-              href: "/company/newsroom",
-            }}
-            isOpen={openKey === "company"}
             onMouseEnter={cancelClose}
             onMouseLeave={scheduleClose}
             onLinkClick={close}

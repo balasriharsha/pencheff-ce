@@ -40,9 +40,9 @@ export type Workspace = {
 
 type WorkspaceContextValue = {
   loading: boolean;
-  // True when the /orgs fetch FAILED (network/auth/etc.). Distinguishes a
-  // failed load from a successful "this user genuinely has zero orgs" — so
-  // consumers never treat a transient API error as "needs onboarding".
+  // True when the /workspaces fetch FAILED (network/misconfigured API base).
+  // Distinguishes a transient load failure from a successful "genuinely empty
+  // workspace list" so consumers never treat an API error as zero workspaces.
   loadError: boolean;
   orgs: Org[];
   activeOrg: Org | null;
@@ -117,10 +117,23 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [nextOrgs, nextWs] = await Promise.all([
-        api<Org[]>("/orgs"),
-        api<Workspace[]>("/workspaces").catch(() => [] as Workspace[]),
-      ]);
+      // CE has a single implicit tenant — there is no /orgs router. Fetch the
+      // workspace list and derive the org list from the workspaces' org_id.
+      const nextWs = await api<Workspace[]>("/workspaces");
+      const nextOrgs: Org[] = Array.from(
+        new Map(
+          nextWs.map((w) => [
+            w.org_id,
+            {
+              id: w.org_id,
+              name: w.name ?? "Default",
+              plan: "free",
+              role: "owner" as const,
+              created_at: w.created_at,
+            },
+          ]),
+        ).values(),
+      );
       setLoadError(false);
       setOrgs(nextOrgs);
       setWorkspaces(nextWs);
@@ -149,8 +162,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         writeStored(ACTIVE_WORKSPACE_STORAGE_KEY, nextWsId);
       }
     } catch {
-      // /orgs failed (network/auth/misconfigured API base). Flag it so the
-      // AuthGuard does NOT mistake this for "zero orgs → onboarding".
+      // /workspaces failed (network/misconfigured API base). Flag it so
+      // consumers can distinguish a transient error from a genuinely empty
+      // workspace list.
       setLoadError(true);
     } finally {
       setLoading(false);
