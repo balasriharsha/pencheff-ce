@@ -32,7 +32,7 @@ Pencheff CE is a complete offensive-security platform you run yourself with **on
 It pairs a **deterministic scan engine** (the same reconnaissance, fuzzing, and exploitation primitives a pentester reaches for) with **optional AI orchestration** (bring your own LLM key) that triages findings, proposes fixes, and can drive autonomous assessment passes. Without an LLM key, every scan, finding, and report still works — the AI paths simply stay dark.
 
 - **Zero-auth, single-user** — one implicit operator, no orgs/teams/SSO.
-- **Full engine** — recon → scan → verify → exploit-chain → report, end to end.
+- **Full engine** — recon -> scan -> verify -> exploit-chain -> report, end to end.
 - **Bring-your-own AI** — optional LLM-assisted triage, grading, and remediation.
 - **Agent-native** — drive the whole platform from any MCP-capable AI agent.
 - **One-command deploy** — Docker Compose brings up the entire stack.
@@ -133,8 +133,8 @@ Pencheff ships an **MCP server with 50+ security tools** — recon, scanning acr
 
 ```
 You:   "Recon example.com, then run an injection + auth scan and chain anything you find."
-Agent: pentest_init → recon_passive → recon_active → scan_injection → scan_auth
-       → exploit_chain_suggest → test_chain → verify_finding → generate_report
+Agent: pentest_init -> recon_passive -> recon_active -> scan_injection -> scan_auth
+       -> exploit_chain_suggest -> test_chain -> verify_finding -> generate_report
 ```
 
 A representative slice of the toolset: `pentest_init` · `recon_active` · `scan_injection` · `scan_auth` · `scan_cloud` · `scan_websocket` · `payload_generate` · `oast_poll` · `exploit_chain_suggest` · `test_endpoint` · `calculate_cvss40` · `verify_finding` · `export_report`.
@@ -156,7 +156,7 @@ Everything is configured through environment variables in `.env` (root) and `app
 Check which AI features are live at any time:
 
 ```bash
-curl http://localhost:8000/capabilities/ai      # → {"available": true|false}
+curl http://localhost:8000/capabilities/ai      # -> {"available": true|false}
 ```
 
 ---
